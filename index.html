@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#f6f7f8">
+  <meta name="theme-color" content="#f4f6f8">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="每日数据">
@@ -14,26 +14,27 @@
   <style>
     :root {
       color-scheme: light;
-      --bg: #f6f7f8;
+      --bg: #f4f6f8;
       --panel: #ffffff;
-      --ink: #181916;
-      --muted: #65707a;
-      --line: #d9dee3;
+      --ink: #111827;
+      --muted: #667085;
+      --line: #d7dde5;
+      --soft: #eef2f6;
       --accent: #0f766e;
       --accent-2: #2563eb;
-      --danger: #a43d32;
-      --warn: #996b18;
-      --tap: 48px;
+      --danger: #b42318;
+      --warn: #9a6700;
+      --tap: 46px;
     }
     * { box-sizing: border-box; }
     html, body { margin: 0; min-height: 100%; background: var(--bg); color: var(--ink); font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif; letter-spacing: 0; }
     body { padding: env(safe-area-inset-top) 0 env(safe-area-inset-bottom); }
     button, input, select, textarea { font: inherit; }
     button { min-height: var(--tap); border: 1px solid var(--line); background: var(--panel); color: var(--ink); border-radius: 8px; padding: 0 12px; touch-action: manipulation; }
-    button.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
-    button.blue { background: var(--accent-2); border-color: var(--accent-2); color: #fff; }
+    button.primary { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 650; }
+    button.blue { background: var(--accent-2); border-color: var(--accent-2); color: #fff; font-weight: 650; }
     button.ghost { background: transparent; }
-    button.danger { color: var(--danger); border-color: #e4b6b1; }
+    button.icon { width: var(--tap); padding: 0; display: inline-grid; place-items: center; }
     button.active { background: var(--ink); color: #fff; border-color: var(--ink); }
     input, select, textarea { width: 100%; min-height: var(--tap); border: 1px solid var(--line); border-radius: 8px; background: #fff; color: var(--ink); padding: 10px 12px; }
     textarea { min-height: 84px; resize: vertical; }
@@ -41,47 +42,63 @@
     .login { min-height: 100vh; display: grid; align-content: center; gap: 16px; padding: 24px; max-width: 420px; margin: 0 auto; }
     .login h1 { margin: 0; font-size: 28px; }
     .login form { display: grid; gap: 12px; }
-    .app { min-height: 100vh; display: grid; grid-template-rows: auto 1fr auto; }
-    .topbar { position: sticky; top: 0; z-index: 10; display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 8px; align-items: center; padding: 10px 10px 8px; background: rgba(246,247,248,.94); border-bottom: 1px solid var(--line); backdrop-filter: blur(14px); }
+    .app { min-height: 100vh; }
+    .topbar { position: sticky; top: 0; z-index: 20; display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 8px; align-items: center; padding: 10px 10px 8px; background: rgba(244,246,248,.96); border-bottom: 1px solid var(--line); backdrop-filter: blur(14px); }
     #todayBtn { min-width: 62px; white-space: nowrap; }
-    .datebar { display: grid; grid-template-columns: 44px minmax(0, 1fr) 44px; gap: 6px; min-width: 0; }
+    .datebar { display: grid; grid-template-columns: 42px minmax(0, 1fr) 42px; gap: 6px; min-width: 0; }
     .datebar button { padding: 0; }
-    .datebar input { text-align: center; font-weight: 650; }
+    .datebar input { text-align: center; font-weight: 700; }
     .status { font-size: 12px; color: var(--muted); text-align: right; white-space: nowrap; }
-    .tabs { display: flex; gap: 8px; overflow-x: auto; padding: 10px; border-bottom: 1px solid var(--line); background: var(--bg); scrollbar-width: none; }
-    .tabs button { min-height: 40px; flex: 0 0 auto; }
-    .content { padding: 0 10px 90px; }
-    .section { display: none; padding-top: 12px; }
-    .section.active { display: block; }
-    .section-title { display: flex; align-items: center; justify-content: space-between; margin: 8px 2px 10px; }
-    .section-title h2 { margin: 0; font-size: 18px; }
-    .grid { display: grid; gap: 8px; }
-    .metric { display: grid; grid-template-columns: 1fr; gap: 10px; align-items: stretch; min-height: 60px; padding: 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--panel); }
+    .tools { position: sticky; top: 67px; z-index: 15; padding: 8px 10px 10px; background: rgba(244,246,248,.96); border-bottom: 1px solid var(--line); backdrop-filter: blur(14px); }
+    .search-row { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: center; }
+    #searchInput { background: #fff; }
+    .filters { display: flex; gap: 6px; overflow-x: auto; padding-top: 8px; scrollbar-width: none; }
+    .filters button { min-height: 36px; flex: 0 0 auto; padding: 0 10px; border-radius: 999px; font-size: 14px; }
+    .summary { display: flex; justify-content: space-between; gap: 10px; padding: 8px 2px 0; color: var(--muted); font-size: 12px; }
+    .summary strong { color: var(--ink); }
+    .content { padding: 10px 10px 96px; max-width: 980px; margin: 0 auto; }
+    .event-strip { display: grid; gap: 8px; margin-bottom: 10px; }
+    .event-card { border: 1px solid var(--line); border-radius: 8px; background: var(--panel); padding: 10px; display: grid; gap: 8px; }
+    .event-card h2 { margin: 0; font-size: 15px; }
+    .event-grid { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: center; }
+    .dose-buttons { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+    .strength-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; }
+    .section-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; padding: 8px 2px; }
+    .section-head h2 { margin: 0; font-size: 18px; }
+    .section-head span { color: var(--muted); font-size: 12px; }
+    .metric-list { display: grid; gap: 8px; }
+    .metric { display: grid; gap: 10px; padding: 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--panel); }
     .metric.dirty { border-color: #b89138; box-shadow: inset 3px 0 0 #b89138; }
-    .metric-label { min-width: 0; }
-    .metric-name { font-size: 15px; font-weight: 650; line-height: 1.35; white-space: normal; overflow-wrap: break-word; }
-    .metric-meta { font-size: 12px; color: var(--muted); margin-top: 3px; }
-    .number-control { display: grid; grid-template-columns: 48px minmax(0, 1fr) 48px; gap: 6px; align-items: center; width: 100%; }
+    .metric-main { min-width: 0; display: grid; gap: 5px; }
+    .metric-title-row { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 8px; align-items: start; }
+    .star { min-height: 34px; width: 34px; padding: 0; color: #98a2b3; }
+    .star.on { color: #b87503; border-color: #e7c06a; background: #fff8e6; }
+    .metric-name { font-size: 16px; font-weight: 700; line-height: 1.3; white-space: normal; overflow-wrap: break-word; }
+    .metric-desc { color: var(--muted); font-size: 13px; line-height: 1.35; overflow-wrap: break-word; }
+    .metric-meta { display: flex; flex-wrap: wrap; gap: 5px; }
+    .pill { display: inline-flex; align-items: center; min-height: 24px; padding: 2px 8px; border-radius: 999px; background: var(--soft); color: #475467; font-size: 12px; }
+    .metric-detail { display: none; border-top: 1px solid var(--line); padding-top: 8px; color: #344054; font-size: 12px; line-height: 1.45; }
+    .metric.expanded .metric-detail { display: block; }
+    .detail-grid { display: grid; gap: 5px; }
+    .detail-grid code { color: #344054; background: #f8fafc; border: 1px solid var(--line); border-radius: 6px; padding: 1px 4px; overflow-wrap: anywhere; }
+    .detail-grid pre { margin: 4px 0 0; padding: 8px; background: #f8fafc; border: 1px solid var(--line); border-radius: 6px; overflow-x: auto; white-space: pre-wrap; }
+    .metric-control { display: grid; gap: 6px; }
+    .number-control { display: grid; grid-template-columns: 46px minmax(0, 1fr) 46px; gap: 6px; align-items: center; width: 100%; }
     .number-control input { text-align: center; padding-left: 4px; padding-right: 4px; }
     .tri { display: grid; grid-template-columns: repeat(3, minmax(48px, 1fr)); gap: 6px; width: 100%; }
-    .text-control { width: 100%; }
-    .quick { display: grid; grid-template-columns: 1fr; gap: 8px; margin-bottom: 12px; }
-    .event-panel { display: grid; gap: 10px; padding: 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--panel); margin-bottom: 10px; }
-    .event-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-    .event-row.three { grid-template-columns: 1fr 1fr 1fr; }
-    .events-list { display: grid; gap: 8px; }
-    .event-item { padding: 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--panel); font-size: 14px; }
-    .bottom { position: fixed; left: 0; right: 0; bottom: 0; display: grid; grid-template-columns: 1fr auto auto; gap: 8px; align-items: center; padding: 10px calc(10px + env(safe-area-inset-right)) calc(10px + env(safe-area-inset-bottom)) calc(10px + env(safe-area-inset-left)); background: rgba(246,247,248,.96); border-top: 1px solid var(--line); backdrop-filter: blur(14px); }
+    .empty { border: 1px dashed var(--line); border-radius: 8px; padding: 18px; color: var(--muted); background: rgba(255,255,255,.72); }
+    .bottom { position: fixed; left: 0; right: 0; bottom: 0; z-index: 25; display: grid; grid-template-columns: 1fr auto auto; gap: 8px; align-items: center; padding: 10px calc(10px + env(safe-area-inset-right)) calc(10px + env(safe-area-inset-bottom)) calc(10px + env(safe-area-inset-left)); background: rgba(244,246,248,.97); border-top: 1px solid var(--line); backdrop-filter: blur(14px); }
     .pending { color: var(--warn); font-size: 13px; }
     .toast { position: fixed; left: 12px; right: 12px; bottom: calc(76px + env(safe-area-inset-bottom)); padding: 12px; border-radius: 8px; background: #20231f; color: #fff; z-index: 30; text-align: center; opacity: 0; transform: translateY(calc(100% + 90px)); transition: transform .2s ease, opacity .2s ease; pointer-events: none; }
     .toast.show { opacity: 1; transform: translateY(0); }
-    @media (min-width: 720px) {
-      .content { max-width: 980px; margin: 0 auto; width: 100%; }
-      .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-      .quick { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-      .metric { grid-template-columns: minmax(0, 1fr) minmax(190px, auto); align-items: center; }
-      .number-control { min-width: 190px; }
-      .metric { min-height: 72px; }
+    @media (min-width: 760px) {
+      .tools { top: 68px; }
+      .content { padding-left: 14px; padding-right: 14px; }
+      .event-strip { grid-template-columns: 1fr 1fr; }
+      .metric { grid-template-columns: minmax(0, 1fr) minmax(230px, 300px); align-items: center; }
+      .metric-detail { grid-column: 1 / -1; }
+      .metric-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .metric-list .metric { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -99,13 +116,20 @@
     <header class="topbar">
       <button id="todayBtn" class="ghost" type="button">今天</button>
       <div class="datebar">
-        <button id="prevDay" type="button">‹</button>
+        <button id="prevDay" type="button" aria-label="前一天">‹</button>
         <input id="dateInput" type="date">
-        <button id="nextDay" type="button">›</button>
+        <button id="nextDay" type="button" aria-label="后一天">›</button>
       </div>
       <div id="status" class="status">-</div>
     </header>
-    <nav id="tabs" class="tabs"></nav>
+    <section class="tools">
+      <div class="search-row">
+        <input id="searchInput" type="search" placeholder="搜索字段、别名、说明">
+        <button id="clearSearch" class="icon" type="button" aria-label="清空搜索">×</button>
+      </div>
+      <nav id="filters" class="filters" aria-label="字段筛选"></nav>
+      <div class="summary"><span id="scopeLabel">-</span><span id="dirtyLabel">-</span></div>
+    </section>
     <section id="content" class="content"></section>
     <footer class="bottom">
       <div id="pending" class="pending">无待同步</div>
@@ -131,6 +155,17 @@
       general: "其他"
     };
     var CATEGORY_ORDER = ["body", "health", "medicine", "supplement", "food", "learning", "media", "habit", "pet", "general"];
+    var DEFAULT_PINNED = [
+      "body_weight_clothed_jin",
+      "blood_glucose_yuyue550",
+      "blood_glucose_post_meal_hours",
+      "atomoxetine_total_mg",
+      "eggs_count",
+      "daily_nuts_bag_count",
+      "reading_or_audiobook",
+      "learn_english_on_x",
+      "watched_financial_news"
+    ];
     var state = {
       authed: false,
       date: shanghaiDate(0),
@@ -138,7 +173,10 @@
       values: {},
       events: [],
       dirty: {},
-      active: "quick",
+      filter: localStorage.getItem("metricsPwaFilter") || "pinned",
+      query: "",
+      expanded: {},
+      pinned: loadPinned(),
       token: localStorage.getItem("metricsPwaToken") || "",
       queue: loadQueue()
     };
@@ -151,9 +189,14 @@
       loginMsg: document.getElementById("loginMsg"),
       dateInput: document.getElementById("dateInput"),
       status: document.getElementById("status"),
-      tabs: document.getElementById("tabs"),
+      searchInput: document.getElementById("searchInput"),
+      clearSearch: document.getElementById("clearSearch"),
+      filters: document.getElementById("filters"),
+      scopeLabel: document.getElementById("scopeLabel"),
+      dirtyLabel: document.getElementById("dirtyLabel"),
       content: document.getElementById("content"),
       pending: document.getElementById("pending"),
+      saveBtn: document.getElementById("saveBtn"),
       toast: document.getElementById("toast")
     };
 
@@ -183,9 +226,19 @@
     function loadQueue() {
       try { return JSON.parse(localStorage.getItem("metricsPwaQueue") || "[]"); } catch (_) { return []; }
     }
+    function loadPinned() {
+      try {
+        var saved = JSON.parse(localStorage.getItem("metricsPwaPinnedKeys") || "null");
+        if (Array.isArray(saved) && saved.length) return saved;
+      } catch (_) {}
+      return DEFAULT_PINNED.slice();
+    }
+    function savePinned() {
+      localStorage.setItem("metricsPwaPinnedKeys", JSON.stringify(state.pinned));
+    }
     function saveQueue() {
       localStorage.setItem("metricsPwaQueue", JSON.stringify(state.queue));
-      el.pending.textContent = state.queue.length ? "待同步 " + state.queue.length : "无待同步";
+      updateFooter();
     }
     function enqueue(item) {
       state.queue.push(item);
@@ -296,9 +349,18 @@
       document.getElementById("prevDay").addEventListener("click", function () { changeDate(addDays(state.date, -1)); });
       document.getElementById("nextDay").addEventListener("click", function () { changeDate(addDays(state.date, 1)); });
       el.dateInput.addEventListener("change", function () { changeDate(el.dateInput.value); });
+      el.searchInput.addEventListener("input", function () { state.query = el.searchInput.value.trim(); renderAll(); });
+      el.clearSearch.addEventListener("click", function () { el.searchInput.value = ""; state.query = ""; renderAll(); });
       document.getElementById("saveBtn").addEventListener("click", saveDirty);
       document.getElementById("syncBtn").addEventListener("click", flushQueue);
       window.addEventListener("online", flushQueue);
+      el.filters.addEventListener("click", function (event) {
+        var btn = event.target.closest("button[data-filter]");
+        if (!btn) return;
+        state.filter = btn.dataset.filter;
+        localStorage.setItem("metricsPwaFilter", state.filter);
+        renderAll();
+      });
       el.content.addEventListener("input", handleInput);
       el.content.addEventListener("click", handleClick);
     }
@@ -312,7 +374,7 @@
       setStatus("加载字段");
       var data = await api("/api/schema");
       state.defs = data.definitions || [];
-      renderShell();
+      renderAll();
     }
     async function loadDay() {
       setStatus("读取中");
@@ -322,85 +384,80 @@
       renderAll();
       setStatus("已读取");
     }
-    function renderShell() {
-      var tabs = [{ key: "quick", name: "快速" }, { key: "events", name: "事件" }];
-      var cats = unique(state.defs.filter(function (d) { return d.category !== "strength_event" && d.category !== "medicine_event"; }).map(function (d) { return d.category || "general"; }));
-      cats.sort(function (a, b) { return orderIndex(a) - orderIndex(b); });
-      cats.forEach(function (cat) { tabs.push({ key: "cat:" + cat, name: CATEGORY_NAMES[cat] || cat }); });
-      el.tabs.innerHTML = tabs.map(function (tab) {
-        return '<button type="button" data-tab="' + escapeHtml(tab.key) + '">' + escapeHtml(tab.name) + '</button>';
-      }).join("");
-      el.tabs.addEventListener("click", function (event) {
-        var btn = event.target.closest("button[data-tab]");
-        if (!btn) return;
-        state.active = btn.dataset.tab;
-        renderAll();
-      });
-    }
     function renderAll() {
-      renderTabs();
-      var html = "";
-      html += renderQuick();
-      html += renderEvents();
-      var cats = unique(state.defs.filter(function (d) { return d.category !== "strength_event" && d.category !== "medicine_event"; }).map(function (d) { return d.category || "general"; }));
-      cats.sort(function (a, b) { return orderIndex(a) - orderIndex(b); });
-      cats.forEach(function (cat) { html += renderCategory(cat); });
-      el.content.innerHTML = html;
-      saveQueue();
+      renderFilters();
+      renderContent();
+      updateFooter();
     }
-    function renderTabs() {
-      Array.prototype.forEach.call(el.tabs.querySelectorAll("button"), function (btn) {
-        btn.classList.toggle("active", btn.dataset.tab === state.active);
-      });
-    }
-    function renderQuick() {
-      var keys = [
-        "body_weight_clothed_jin",
-        "blood_glucose_yuyue550",
-        "atomoxetine_total_mg",
-        "eggs_count",
-        "daily_nuts_bag_count",
-        "reading_or_audiobook",
-        "learn_english_on_x",
-        "watched_financial_news"
+    function renderFilters() {
+      var cats = categories();
+      var chips = [
+        { key: "pinned", name: "常用", count: pinnedDefs().length },
+        { key: "all", name: "全部", count: editableDefs().length },
+        { key: "filled", name: "已填", count: filledDefs().length }
       ];
-      var defs = keys.map(findDef).filter(Boolean);
-      return '<div class="section ' + activeClass("quick") + '" data-section="quick"><div class="section-title"><h2>快速</h2></div><div class="quick">' + defs.map(renderMetric).join("") + '</div></div>';
+      cats.forEach(function (cat) { chips.push({ key: "cat:" + cat, name: CATEGORY_NAMES[cat] || cat, count: defsForCategory(cat).length }); });
+      el.filters.innerHTML = chips.map(function (chip) {
+        return '<button type="button" data-filter="' + escapeAttr(chip.key) + '" class="' + (state.filter === chip.key ? 'active' : '') + '">' + escapeHtml(chip.name) + ' ' + chip.count + '</button>';
+      }).join("");
+      el.clearSearch.classList.toggle("hidden", !state.query);
     }
-    function renderCategory(cat) {
-      var defs = state.defs.filter(function (d) { return (d.category || "general") === cat; });
-      return '<div class="section ' + activeClass("cat:" + cat) + '" data-section="' + escapeHtml(cat) + '"><div class="section-title"><h2>' + escapeHtml(CATEGORY_NAMES[cat] || cat) + '</h2></div><div class="grid">' + defs.map(renderMetric).join("") + '</div></div>';
+    function renderContent() {
+      var defs = visibleDefs();
+      var title = scopeTitle(defs.length);
+      var html = renderEventsPanel();
+      html += '<div class="section-head"><h2>' + escapeHtml(title) + '</h2><span>' + escapeHtml(state.query ? '搜索覆盖全部字段' : '点星标加入常用') + '</span></div>';
+      if (!defs.length) {
+        html += '<div class="empty">没有匹配字段。换个关键词，或切到“全部”。</div>';
+      } else {
+        html += '<div class="metric-list">' + defs.map(renderMetric).join("") + '</div>';
+      }
+      el.content.innerHTML = html;
+      el.scopeLabel.textContent = title + ' · 显示 ' + defs.length + ' 项';
+    }
+    function renderEventsPanel() {
+      return '<div class="event-strip">' +
+        '<div class="event-card"><h2>服药事件</h2><div class="event-grid"><input id="doseMg" type="number" inputmode="decimal" placeholder="mg"><button class="blue" type="button" data-event="medicine">记录</button></div><div class="dose-buttons"><button type="button" data-dose="10">10</button><button type="button" data-dose="20">20</button><button type="button" data-dose="40">40</button></div></div>' +
+        '<div class="event-card"><h2>力量训练</h2><div class="event-grid"><select id="strengthExercise"><option value="push_press">推举</option><option value="squat">深蹲</option><option value="deadlift">硬拉</option><option value="bench_press">卧推</option></select><button class="blue" type="button" data-event="strength">记录</button></div><div class="strength-grid"><input id="strengthWeight" type="number" inputmode="decimal" placeholder="kg"><input id="strengthSets" type="number" inputmode="numeric" placeholder="组"><input id="strengthReps" type="number" inputmode="numeric" placeholder="次"></div></div>' +
+        '</div>';
     }
     function renderMetric(def) {
       var value = Object.prototype.hasOwnProperty.call(state.dirty, def.metric_key) ? state.dirty[def.metric_key] : state.values[def.metric_key];
       var dirty = Object.prototype.hasOwnProperty.call(state.dirty, def.metric_key);
-      var control = "";
-      if (def.value_type === "boolean") control = renderBool(def, value);
-      else if (def.value_type === "text") control = '<input class="text-control metric-input" data-key="' + def.metric_key + '" value="' + escapeAttr(value == null ? "" : value) + '">';
-      else if (def.value_type === "number") control = renderNumber(def, value);
-      else control = '<button type="button" data-json="' + def.metric_key + '">事件</button>';
-      return '<div class="metric ' + (dirty ? "dirty" : "") + '" data-metric="' + escapeHtml(def.metric_key) + '"><div class="metric-label"><div class="metric-name">' + escapeHtml(label(def)) + '</div><div class="metric-meta">' + escapeHtml(def.unit || def.metric_key) + '</div></div>' + control + '</div>';
+      var expanded = !!state.expanded[def.metric_key];
+      var pinned = state.pinned.indexOf(def.metric_key) !== -1;
+      return '<article class="metric ' + (dirty ? 'dirty ' : '') + (expanded ? 'expanded' : '') + '" data-metric="' + escapeAttr(def.metric_key) + '">' +
+        '<div class="metric-main"><div class="metric-title-row"><button class="star ' + (pinned ? 'on' : '') + '" type="button" data-pin="' + escapeAttr(def.metric_key) + '" aria-label="常用">★</button><div><div class="metric-name">' + escapeHtml(cleanLabel(def)) + '</div><div class="metric-desc">' + escapeHtml(shortDescription(def)) + '</div></div><button class="icon" type="button" data-info="' + escapeAttr(def.metric_key) + '" aria-label="字段说明">i</button></div>' +
+        '<div class="metric-meta">' + metaPills(def).map(function (item) { return '<span class="pill">' + escapeHtml(item) + '</span>'; }).join("") + '</div></div>' +
+        '<div class="metric-control">' + renderControl(def, value) + '</div>' + renderMetricDetail(def) + '</article>';
+    }
+    function renderControl(def, value) {
+      if (def.value_type === "boolean") return renderBool(def, value);
+      if (def.value_type === "text") return '<input class="metric-input" data-key="' + escapeAttr(def.metric_key) + '" value="' + escapeAttr(value == null ? "" : value) + '" placeholder="输入文本">';
+      if (def.value_type === "number") return renderNumber(def, value);
+      return '<button type="button" data-json="' + escapeAttr(def.metric_key) + '">用事件记录</button>';
     }
     function renderNumber(def, value) {
       var step = stepFor(def);
-      return '<div class="number-control"><button type="button" data-step="' + def.metric_key + '" data-delta="-' + step + '">−</button><input class="metric-input" data-key="' + def.metric_key + '" type="number" inputmode="decimal" step="' + step + '" value="' + escapeAttr(value == null ? "" : value) + '"><button type="button" data-step="' + def.metric_key + '" data-delta="' + step + '">+</button></div>';
+      return '<div class="number-control"><button type="button" data-step="' + escapeAttr(def.metric_key) + '" data-delta="-' + step + '">−</button><input class="metric-input" data-key="' + escapeAttr(def.metric_key) + '" type="number" inputmode="decimal" step="' + step + '" value="' + escapeAttr(value == null ? "" : value) + '"><button type="button" data-step="' + escapeAttr(def.metric_key) + '" data-delta="' + step + '">+</button></div>';
     }
     function renderBool(def, value) {
       var current = value === true ? "true" : value === false ? "false" : "";
-      return '<div class="tri"><button type="button" data-bool="' + def.metric_key + '" data-value="" class="' + (current === "" ? "active" : "") + '">—</button><button type="button" data-bool="' + def.metric_key + '" data-value="false" class="' + (current === "false" ? "active" : "") + '">否</button><button type="button" data-bool="' + def.metric_key + '" data-value="true" class="' + (current === "true" ? "active" : "") + '">是</button></div>';
+      return '<div class="tri"><button type="button" data-bool="' + escapeAttr(def.metric_key) + '" data-value="" class="' + (current === "" ? "active" : "") + '">—</button><button type="button" data-bool="' + escapeAttr(def.metric_key) + '" data-value="false" class="' + (current === "false" ? "active" : "") + '">否</button><button type="button" data-bool="' + escapeAttr(def.metric_key) + '" data-value="true" class="' + (current === "true" ? "active" : "") + '">是</button></div>';
     }
-    function renderEvents() {
-      var events = state.events || [];
-      var list = events.length ? events.slice(0, 24).map(function (event) {
-        var time = String(event.occurred_at || "").slice(11, 16);
-        var value = event.value == null ? "" : JSON.stringify(event.value);
-        if (typeof event.value === "number" || typeof event.value === "string" || typeof event.value === "boolean") value = String(event.value);
-        return '<div class="event-item">' + escapeHtml(time + " " + event.event_type + " " + (event.metric_key || "") + " " + value) + '</div>';
-      }).join("") : '<div class="event-item">暂无事件</div>';
-      return '<div class="section ' + activeClass("events") + '" data-section="events"><div class="section-title"><h2>事件</h2></div>' +
-        '<div class="event-panel"><div class="event-row"><input id="doseMg" type="number" inputmode="decimal" placeholder="托莫西汀 mg"><button class="blue" type="button" data-event="medicine">记录服药</button></div><div class="event-row three"><button type="button" data-dose="10">10mg</button><button type="button" data-dose="20">20mg</button><button type="button" data-dose="40">40mg</button></div></div>' +
-        '<div class="event-panel"><div class="event-row"><select id="strengthExercise"><option value="push_press">推举</option><option value="squat">深蹲</option><option value="deadlift">硬拉</option><option value="bench_press">卧推</option></select><button class="blue" type="button" data-event="strength">记录训练</button></div><div class="event-row three"><input id="strengthWeight" type="number" inputmode="decimal" placeholder="kg"><input id="strengthSets" type="number" inputmode="numeric" placeholder="组"><input id="strengthReps" type="number" inputmode="numeric" placeholder="次"></div></div>' +
-        '<div class="events-list">' + list + '</div></div>';
+    function renderMetricDetail(def) {
+      var lines = [];
+      lines.push('<div><strong>说明：</strong>' + escapeHtml(def.description || '数据库暂无说明') + '</div>');
+      lines.push('<div><strong>字段：</strong><code>' + escapeHtml(def.metric_key) + '</code></div>');
+      lines.push('<div><strong>格式：</strong>' + escapeHtml(def.value_type + (def.unit ? ' · ' + def.unit : '') + ' · ' + (CATEGORY_NAMES[def.category] || def.category || '其他')) + '</div>');
+      if (def.aliases && def.aliases.length) lines.push('<div><strong>别名：</strong>' + escapeHtml(def.aliases.join(' / ')) + '</div>');
+      if (def.source_headers && def.source_headers.length) lines.push('<div><strong>原表头：</strong>' + escapeHtml(def.source_headers.join(' / ')) + '</div>');
+      if (def.aggregation_method) lines.push('<div><strong>聚合：</strong>' + escapeHtml(def.aggregation_method) + '</div>');
+      var md = def.metadata || {};
+      if (md.note) lines.push('<div><strong>写入备注：</strong>' + escapeHtml(String(md.note)) + '</div>');
+      if (md.write_kind || md.write_action || md.source_column) lines.push('<div><strong>元数据：</strong>' + escapeHtml([md.write_kind, md.write_action, md.source_column && '列 ' + md.source_column].filter(Boolean).join(' · ')) + '</div>');
+      if (md.write_format) lines.push('<div><strong>写入样例：</strong><pre>' + escapeHtml(JSON.stringify(md.write_format, null, 2)) + '</pre></div>');
+      return '<div class="metric-detail"><div class="detail-grid">' + lines.join("") + '</div></div>';
     }
     function handleInput(event) {
       var input = event.target.closest(".metric-input");
@@ -414,13 +471,17 @@
       else setDirty(key, value);
     }
     function handleClick(event) {
+      var pin = event.target.closest("[data-pin]");
+      if (pin) { togglePinned(pin.dataset.pin); return; }
+      var info = event.target.closest("[data-info]");
+      if (info) { state.expanded[info.dataset.info] = !state.expanded[info.dataset.info]; renderAll(); return; }
       var step = event.target.closest("[data-step]");
       if (step) {
         var key = step.dataset.step;
         var input = el.content.querySelector('input[data-key="' + cssEscape(key) + '"]');
-        var current = Number(input.value || 0);
+        var current = Number(input && input.value || 0);
         var next = roundNumber(current + Number(step.dataset.delta || 0));
-        input.value = String(next);
+        if (input) input.value = String(next);
         setDirty(key, next);
         renderAll();
         return;
@@ -446,6 +507,7 @@
     function setDirty(key, value) {
       state.dirty[key] = value;
       setStatus("未保存");
+      updateFooter();
     }
     async function saveDirty() {
       var keys = Object.keys(state.dirty);
@@ -460,7 +522,7 @@
       try {
         await sendOrQueue("/api/metrics", "POST", body);
         Object.keys(snapshot).forEach(function (key) { state.values[key] = snapshot[key]; });
-        showToast("已保存");
+        showToast("已保存 " + keys.length + " 项");
         await loadDay();
       } catch (err) {
         showToast("已排队");
@@ -484,7 +546,7 @@
       try {
         await sendOrQueue("/api/event", "POST", body);
         if (input) input.value = "";
-        showToast("已记录");
+        showToast("已记录服药");
         await loadDay();
       } catch (_) {
         showToast("已排队");
@@ -508,11 +570,59 @@
       };
       try {
         await sendOrQueue("/api/event", "POST", body);
-        showToast("已记录");
+        showToast("已记录训练");
         await loadDay();
       } catch (_) {
         showToast("已排队");
       }
+    }
+    function updateFooter() {
+      var dirtyCount = Object.keys(state.dirty).length;
+      el.pending.textContent = state.queue.length ? "待同步 " + state.queue.length : "无待同步";
+      el.saveBtn.textContent = dirtyCount ? "保存 " + dirtyCount : "保存";
+      el.dirtyLabel.textContent = dirtyCount ? "已改 " + dirtyCount + " 项" : "未修改";
+    }
+    function visibleDefs() {
+      var defs = editableDefs();
+      var q = state.query.toLowerCase();
+      if (q) return defs.filter(function (def) { return searchText(def).indexOf(q) !== -1; });
+      if (state.filter === "pinned") return pinnedDefs();
+      if (state.filter === "filled") return filledDefs();
+      if (state.filter.indexOf("cat:") === 0) return defsForCategory(state.filter.slice(4));
+      return defs;
+    }
+    function editableDefs() {
+      return state.defs.filter(function (d) { return d.category !== "strength_event" && d.category !== "medicine_event"; });
+    }
+    function pinnedDefs() {
+      var byKey = {};
+      editableDefs().forEach(function (def) { byKey[def.metric_key] = def; });
+      return state.pinned.map(function (key) { return byKey[key]; }).filter(Boolean);
+    }
+    function filledDefs() {
+      return editableDefs().filter(function (def) { return Object.prototype.hasOwnProperty.call(state.values, def.metric_key) || Object.prototype.hasOwnProperty.call(state.dirty, def.metric_key); });
+    }
+    function defsForCategory(cat) {
+      return editableDefs().filter(function (d) { return (d.category || "general") === cat; });
+    }
+    function categories() {
+      var cats = unique(editableDefs().map(function (d) { return d.category || "general"; }));
+      cats.sort(function (a, b) { return orderIndex(a) - orderIndex(b); });
+      return cats;
+    }
+    function scopeTitle(count) {
+      if (state.query) return '搜索“' + state.query + '”';
+      if (state.filter === "pinned") return "常用字段";
+      if (state.filter === "filled") return "已填写字段";
+      if (state.filter.indexOf("cat:") === 0) return CATEGORY_NAMES[state.filter.slice(4)] || state.filter.slice(4);
+      return "全部字段";
+    }
+    function togglePinned(key) {
+      var index = state.pinned.indexOf(key);
+      if (index === -1) state.pinned.unshift(key);
+      else state.pinned.splice(index, 1);
+      savePinned();
+      renderAll();
     }
     function findDef(key) {
       return state.defs.find(function (d) { return d.metric_key === key; });
@@ -524,11 +634,23 @@
     function unique(list) {
       return Array.from(new Set(list));
     }
-    function activeClass(key) {
-      return state.active === key ? "active" : "";
+    function cleanLabel(def) {
+      return String(def.label || def.metric_key).replace(/\n+/g, " ").replace(/\s+/g, " ").trim();
     }
-    function label(def) {
-      return String(def.label || def.metric_key).replace(/\n+/g, "\n");
+    function shortDescription(def) {
+      var text = def.description || (def.aliases && def.aliases.length ? "别名：" + def.aliases.join(" / ") : "点 i 查看字段格式");
+      return text.length > 86 ? text.slice(0, 84) + "…" : text;
+    }
+    function metaPills(def) {
+      var out = [];
+      out.push(def.value_type || "value");
+      if (def.unit) out.push(def.unit);
+      out.push(CATEGORY_NAMES[def.category] || def.category || "其他");
+      if (def.metadata && def.metadata.source_column) out.push("列 " + def.metadata.source_column);
+      return out;
+    }
+    function searchText(def) {
+      return [def.metric_key, def.label, def.description, def.unit, def.category, (def.aliases || []).join(" "), (def.source_headers || []).join(" ")].join(" ").toLowerCase();
     }
     function stepFor(def) {
       var key = def.metric_key;
@@ -542,8 +664,8 @@
       return Math.round(value * 100) / 100;
     }
     function escapeHtml(value) {
-      return String(value == null ? "" : value).replace(/[&<>"']/g, function (ch) {
-        return ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[ch];
+      return String(value == null ? "" : value).replace(/[&<>"']/g, function (char) {
+        return ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[char];
       });
     }
     function escapeAttr(value) {
@@ -551,7 +673,7 @@
     }
     function cssEscape(value) {
       if (window.CSS && CSS.escape) return CSS.escape(value);
-      return String(value).replace(/"/g, '\\"');
+      return String(value).replace(/[^a-zA-Z0-9_-]/g, "\\$&");
     }
     boot();
   })();
