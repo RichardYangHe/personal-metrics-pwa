@@ -73,8 +73,8 @@
     .event-item { padding: 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--panel); font-size: 14px; }
     .bottom { position: fixed; left: 0; right: 0; bottom: 0; display: grid; grid-template-columns: 1fr auto auto; gap: 8px; align-items: center; padding: 10px calc(10px + env(safe-area-inset-right)) calc(10px + env(safe-area-inset-bottom)) calc(10px + env(safe-area-inset-left)); background: rgba(246,247,248,.96); border-top: 1px solid var(--line); backdrop-filter: blur(14px); }
     .pending { color: var(--warn); font-size: 13px; }
-    .toast { position: fixed; left: 12px; right: 12px; bottom: calc(76px + env(safe-area-inset-bottom)); padding: 12px; border-radius: 8px; background: #20231f; color: #fff; z-index: 30; text-align: center; transform: translateY(150%); transition: transform .2s ease; }
-    .toast.show { transform: translateY(0); }
+    .toast { position: fixed; left: 12px; right: 12px; bottom: calc(76px + env(safe-area-inset-bottom)); padding: 12px; border-radius: 8px; background: #20231f; color: #fff; z-index: 30; text-align: center; opacity: 0; transform: translateY(calc(100% + 90px)); transition: transform .2s ease, opacity .2s ease; pointer-events: none; }
+    .toast.show { opacity: 1; transform: translateY(0); }
     @media (min-width: 720px) {
       .content { max-width: 980px; margin: 0 auto; width: 100%; }
       .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
