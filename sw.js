@@ -1,4 +1,4 @@
-const CACHE = "metrics-pwa-pages-v2";
+const CACHE = "metrics-pwa-pages-v3";
 const BASE = "/personal-metrics-pwa";
 const API_BASE = "https://mumcofuervklloaotpih.supabase.co/functions/v1/metrics-pwa";
 const ASSETS = [BASE + "/", BASE + "/manifest.webmanifest", BASE + "/icon.svg"];
