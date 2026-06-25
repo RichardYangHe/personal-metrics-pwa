@@ -1,0 +1,555 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f7f7f2">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="每日数据">
+  <link rel="manifest" href="/personal-metrics-pwa/manifest.webmanifest">
+  <link rel="apple-touch-icon" href="/personal-metrics-pwa/icon.svg">
+  <title>每日数据</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f7f7f2;
+      --panel: #ffffff;
+      --ink: #181916;
+      --muted: #6a6f63;
+      --line: #dfe2d6;
+      --accent: #176b5c;
+      --accent-2: #244b8f;
+      --danger: #a43d32;
+      --warn: #996b18;
+      --tap: 48px;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-height: 100%; background: var(--bg); color: var(--ink); font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif; letter-spacing: 0; }
+    body { padding: env(safe-area-inset-top) 0 env(safe-area-inset-bottom); }
+    button, input, select, textarea { font: inherit; }
+    button { min-height: var(--tap); border: 1px solid var(--line); background: var(--panel); color: var(--ink); border-radius: 8px; padding: 0 12px; touch-action: manipulation; }
+    button.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+    button.blue { background: var(--accent-2); border-color: var(--accent-2); color: #fff; }
+    button.ghost { background: transparent; }
+    button.danger { color: var(--danger); border-color: #e4b6b1; }
+    button.active { background: var(--ink); color: #fff; border-color: var(--ink); }
+    input, select, textarea { width: 100%; min-height: var(--tap); border: 1px solid var(--line); border-radius: 8px; background: #fff; color: var(--ink); padding: 10px 12px; }
+    textarea { min-height: 84px; resize: vertical; }
+    .hidden { display: none !important; }
+    .login { min-height: 100vh; display: grid; align-content: center; gap: 16px; padding: 24px; max-width: 420px; margin: 0 auto; }
+    .login h1 { margin: 0; font-size: 28px; }
+    .login form { display: grid; gap: 12px; }
+    .app { min-height: 100vh; display: grid; grid-template-rows: auto 1fr auto; }
+    .topbar { position: sticky; top: 0; z-index: 10; display: grid; grid-template-columns: auto 1fr auto; gap: 8px; align-items: center; padding: 10px 10px 8px; background: rgba(247,247,242,.94); border-bottom: 1px solid var(--line); backdrop-filter: blur(14px); }
+    .datebar { display: grid; grid-template-columns: 48px 1fr 48px; gap: 6px; }
+    .datebar input { text-align: center; font-weight: 650; }
+    .status { font-size: 12px; color: var(--muted); text-align: right; white-space: nowrap; }
+    .tabs { display: flex; gap: 8px; overflow-x: auto; padding: 10px; border-bottom: 1px solid var(--line); background: var(--bg); scrollbar-width: none; }
+    .tabs button { min-height: 40px; flex: 0 0 auto; }
+    .content { padding: 0 10px 90px; }
+    .section { display: none; padding-top: 12px; }
+    .section.active { display: block; }
+    .section-title { display: flex; align-items: center; justify-content: space-between; margin: 8px 2px 10px; }
+    .section-title h2 { margin: 0; font-size: 18px; }
+    .grid { display: grid; gap: 8px; }
+    .metric { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: center; min-height: 60px; padding: 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--panel); }
+    .metric.dirty { border-color: #b89138; box-shadow: inset 3px 0 0 #b89138; }
+    .metric-label { min-width: 0; }
+    .metric-name { font-size: 15px; font-weight: 650; line-height: 1.25; white-space: pre-line; overflow-wrap: anywhere; }
+    .metric-meta { font-size: 12px; color: var(--muted); margin-top: 3px; }
+    .number-control { display: grid; grid-template-columns: 42px minmax(78px, 104px) 42px; gap: 5px; align-items: center; }
+    .number-control input { text-align: center; padding-left: 4px; padding-right: 4px; }
+    .tri { display: grid; grid-template-columns: 42px 42px 42px; gap: 5px; }
+    .text-control { width: min(48vw, 190px); }
+    .quick { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-bottom: 12px; }
+    .event-panel { display: grid; gap: 10px; padding: 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--panel); margin-bottom: 10px; }
+    .event-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .event-row.three { grid-template-columns: 1fr 1fr 1fr; }
+    .events-list { display: grid; gap: 8px; }
+    .event-item { padding: 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--panel); font-size: 14px; }
+    .bottom { position: fixed; left: 0; right: 0; bottom: 0; display: grid; grid-template-columns: 1fr auto auto; gap: 8px; align-items: center; padding: 10px calc(10px + env(safe-area-inset-right)) calc(10px + env(safe-area-inset-bottom)) calc(10px + env(safe-area-inset-left)); background: rgba(247,247,242,.96); border-top: 1px solid var(--line); backdrop-filter: blur(14px); }
+    .pending { color: var(--warn); font-size: 13px; }
+    .toast { position: fixed; left: 12px; right: 12px; bottom: calc(76px + env(safe-area-inset-bottom)); padding: 12px; border-radius: 8px; background: #20231f; color: #fff; z-index: 30; text-align: center; transform: translateY(150%); transition: transform .2s ease; }
+    .toast.show { transform: translateY(0); }
+    @media (min-width: 720px) {
+      .content { max-width: 980px; margin: 0 auto; width: 100%; }
+      .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .quick { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+      .metric { min-height: 72px; }
+    }
+  </style>
+</head>
+<body>
+  <main id="login" class="login hidden">
+    <h1>每日数据</h1>
+    <form id="loginForm">
+      <input id="passphrase" type="password" autocomplete="current-password" placeholder="登录口令">
+      <button class="primary" type="submit">进入</button>
+    </form>
+    <div id="loginMsg" class="status"></div>
+  </main>
+
+  <main id="app" class="app hidden">
+    <header class="topbar">
+      <button id="todayBtn" class="ghost" type="button">今天</button>
+      <div class="datebar">
+        <button id="prevDay" type="button">‹</button>
+        <input id="dateInput" type="date">
+        <button id="nextDay" type="button">›</button>
+      </div>
+      <div id="status" class="status">-</div>
+    </header>
+    <nav id="tabs" class="tabs"></nav>
+    <section id="content" class="content"></section>
+    <footer class="bottom">
+      <div id="pending" class="pending">无待同步</div>
+      <button id="syncBtn" type="button">同步</button>
+      <button id="saveBtn" class="primary" type="button">保存</button>
+    </footer>
+    <div id="toast" class="toast"></div>
+  </main>
+
+  <script>
+  (function () {
+    var BASE = "https://mumcofuervklloaotpih.supabase.co/functions/v1/metrics-pwa";
+    var CATEGORY_NAMES = {
+      body: "身体",
+      health: "健康",
+      medicine: "药物",
+      supplement: "补剂",
+      food: "食物",
+      learning: "学习",
+      media: "媒体",
+      habit: "习惯",
+      pet: "宠物",
+      general: "其他"
+    };
+    var CATEGORY_ORDER = ["body", "health", "medicine", "supplement", "food", "learning", "media", "habit", "pet", "general"];
+    var state = {
+      authed: false,
+      date: shanghaiDate(0),
+      defs: [],
+      values: {},
+      events: [],
+      dirty: {},
+      active: "quick",
+      token: localStorage.getItem("metricsPwaToken") || "",
+      queue: loadQueue()
+    };
+
+    var el = {
+      login: document.getElementById("login"),
+      app: document.getElementById("app"),
+      loginForm: document.getElementById("loginForm"),
+      passphrase: document.getElementById("passphrase"),
+      loginMsg: document.getElementById("loginMsg"),
+      dateInput: document.getElementById("dateInput"),
+      status: document.getElementById("status"),
+      tabs: document.getElementById("tabs"),
+      content: document.getElementById("content"),
+      pending: document.getElementById("pending"),
+      toast: document.getElementById("toast")
+    };
+
+    function shanghaiDate(offset) {
+      var base = new Date(Date.now() + offset * 86400000);
+      return new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Shanghai", year: "numeric", month: "2-digit", day: "2-digit" }).format(base);
+    }
+    function shanghaiTime() {
+      return new Intl.DateTimeFormat("en-GB", { timeZone: "Asia/Shanghai", hour: "2-digit", minute: "2-digit", hour12: false }).format(new Date());
+    }
+    function addDays(date, offset) {
+      var parts = date.split("-").map(Number);
+      var d = new Date(Date.UTC(parts[0], parts[1] - 1, parts[2] + offset));
+      return d.toISOString().slice(0, 10);
+    }
+    function uid() {
+      return "pwa-" + Date.now() + "-" + Math.random().toString(16).slice(2);
+    }
+    function showToast(text) {
+      el.toast.textContent = text;
+      el.toast.classList.add("show");
+      setTimeout(function () { el.toast.classList.remove("show"); }, 1800);
+    }
+    function setStatus(text) {
+      el.status.textContent = text;
+    }
+    function loadQueue() {
+      try { return JSON.parse(localStorage.getItem("metricsPwaQueue") || "[]"); } catch (_) { return []; }
+    }
+    function saveQueue() {
+      localStorage.setItem("metricsPwaQueue", JSON.stringify(state.queue));
+      el.pending.textContent = state.queue.length ? "待同步 " + state.queue.length : "无待同步";
+    }
+    function enqueue(item) {
+      state.queue.push(item);
+      saveQueue();
+      showToast("已加入待同步");
+    }
+    async function api(path, options) {
+      var opts = options || {};
+      opts.credentials = "same-origin";
+      opts.headers = Object.assign({ "content-type": "application/json" }, opts.headers || {});
+      if (state.token) opts.headers.Authorization = "Bearer " + state.token;
+      var res = await fetch(BASE + path, opts);
+      var data = await res.json().catch(function () { return {}; });
+      if (res.status === 401) {
+        state.authed = false;
+        state.token = "";
+        localStorage.removeItem("metricsPwaToken");
+        showLogin();
+        throw new Error("Unauthorized");
+      }
+      if (!res.ok || data.ok === false) throw new Error(data.error || "请求失败");
+      return data;
+    }
+    async function sendOrQueue(path, method, body) {
+      var item = { id: uid(), path: path, method: method, body: body, created_at: new Date().toISOString() };
+      if (!navigator.onLine) {
+        enqueue(item);
+        return { queued: true };
+      }
+      try {
+        return await api(path, { method: method, body: JSON.stringify(body) });
+      } catch (err) {
+        if (String(err.message) !== "Unauthorized") enqueue(item);
+        throw err;
+      }
+    }
+    async function flushQueue() {
+      if (!state.queue.length || !navigator.onLine) {
+        saveQueue();
+        return;
+      }
+      var next = [];
+      for (var i = 0; i < state.queue.length; i += 1) {
+        var item = state.queue[i];
+        try {
+          await api(item.path, { method: item.method, body: JSON.stringify(item.body) });
+        } catch (err) {
+          next = state.queue.slice(i);
+          break;
+        }
+      }
+      state.queue = next;
+      saveQueue();
+      if (!state.queue.length) {
+        showToast("同步完成");
+        await loadDay();
+      }
+    }
+    function showLogin() {
+      el.login.classList.remove("hidden");
+      el.app.classList.add("hidden");
+      setTimeout(function () { el.passphrase.focus(); }, 50);
+    }
+    function showApp() {
+      el.login.classList.add("hidden");
+      el.app.classList.remove("hidden");
+    }
+    async function boot() {
+      registerSW();
+      saveQueue();
+      el.dateInput.value = state.date;
+      bindEvents();
+      try {
+        await api("/api/session");
+        state.authed = true;
+        showApp();
+        await loadSchema();
+        await loadDay();
+        await flushQueue();
+      } catch (_) {
+        showLogin();
+      }
+    }
+    function registerSW() {
+      if ("serviceWorker" in navigator) {
+        navigator.serviceWorker.register("/personal-metrics-pwa/sw.js", { scope: "/personal-metrics-pwa/" }).catch(function () {});
+      }
+    }
+    function bindEvents() {
+      el.loginForm.addEventListener("submit", async function (event) {
+        event.preventDefault();
+        el.loginMsg.textContent = "验证中";
+        try {
+          var result = await api("/api/login", { method: "POST", body: JSON.stringify({ passphrase: el.passphrase.value }) });
+          state.token = result.token || "";
+          if (state.token) localStorage.setItem("metricsPwaToken", state.token);
+          el.passphrase.value = "";
+          state.authed = true;
+          showApp();
+          await loadSchema();
+          await loadDay();
+          el.loginMsg.textContent = "";
+        } catch (err) {
+          el.loginMsg.textContent = "口令不对或尝试过多";
+        }
+      });
+      document.getElementById("todayBtn").addEventListener("click", function () { changeDate(shanghaiDate(0)); });
+      document.getElementById("prevDay").addEventListener("click", function () { changeDate(addDays(state.date, -1)); });
+      document.getElementById("nextDay").addEventListener("click", function () { changeDate(addDays(state.date, 1)); });
+      el.dateInput.addEventListener("change", function () { changeDate(el.dateInput.value); });
+      document.getElementById("saveBtn").addEventListener("click", saveDirty);
+      document.getElementById("syncBtn").addEventListener("click", flushQueue);
+      window.addEventListener("online", flushQueue);
+      el.content.addEventListener("input", handleInput);
+      el.content.addEventListener("click", handleClick);
+    }
+    async function changeDate(date) {
+      state.date = date;
+      el.dateInput.value = date;
+      state.dirty = {};
+      await loadDay();
+    }
+    async function loadSchema() {
+      setStatus("加载字段");
+      var data = await api("/api/schema");
+      state.defs = data.definitions || [];
+      renderShell();
+    }
+    async function loadDay() {
+      setStatus("读取中");
+      var data = await api("/api/day?date=" + encodeURIComponent(state.date));
+      state.values = data.values || {};
+      state.events = data.events || [];
+      renderAll();
+      setStatus("已读取");
+    }
+    function renderShell() {
+      var tabs = [{ key: "quick", name: "快速" }, { key: "events", name: "事件" }];
+      var cats = unique(state.defs.filter(function (d) { return d.category !== "strength_event" && d.category !== "medicine_event"; }).map(function (d) { return d.category || "general"; }));
+      cats.sort(function (a, b) { return orderIndex(a) - orderIndex(b); });
+      cats.forEach(function (cat) { tabs.push({ key: "cat:" + cat, name: CATEGORY_NAMES[cat] || cat }); });
+      el.tabs.innerHTML = tabs.map(function (tab) {
+        return '<button type="button" data-tab="' + escapeHtml(tab.key) + '">' + escapeHtml(tab.name) + '</button>';
+      }).join("");
+      el.tabs.addEventListener("click", function (event) {
+        var btn = event.target.closest("button[data-tab]");
+        if (!btn) return;
+        state.active = btn.dataset.tab;
+        renderAll();
+      });
+    }
+    function renderAll() {
+      renderTabs();
+      var html = "";
+      html += renderQuick();
+      html += renderEvents();
+      var cats = unique(state.defs.filter(function (d) { return d.category !== "strength_event" && d.category !== "medicine_event"; }).map(function (d) { return d.category || "general"; }));
+      cats.sort(function (a, b) { return orderIndex(a) - orderIndex(b); });
+      cats.forEach(function (cat) { html += renderCategory(cat); });
+      el.content.innerHTML = html;
+      saveQueue();
+    }
+    function renderTabs() {
+      Array.prototype.forEach.call(el.tabs.querySelectorAll("button"), function (btn) {
+        btn.classList.toggle("active", btn.dataset.tab === state.active);
+      });
+    }
+    function renderQuick() {
+      var keys = [
+        "body_weight_clothed_jin",
+        "blood_glucose_yuyue550",
+        "atomoxetine_total_mg",
+        "eggs_count",
+        "daily_nuts_bag_count",
+        "reading_or_audiobook",
+        "learn_english_on_x",
+        "watched_financial_news"
+      ];
+      var defs = keys.map(findDef).filter(Boolean);
+      return '<div class="section ' + activeClass("quick") + '" data-section="quick"><div class="section-title"><h2>快速</h2></div><div class="quick">' + defs.map(renderMetric).join("") + '</div></div>';
+    }
+    function renderCategory(cat) {
+      var defs = state.defs.filter(function (d) { return (d.category || "general") === cat; });
+      return '<div class="section ' + activeClass("cat:" + cat) + '" data-section="' + escapeHtml(cat) + '"><div class="section-title"><h2>' + escapeHtml(CATEGORY_NAMES[cat] || cat) + '</h2></div><div class="grid">' + defs.map(renderMetric).join("") + '</div></div>';
+    }
+    function renderMetric(def) {
+      var value = Object.prototype.hasOwnProperty.call(state.dirty, def.metric_key) ? state.dirty[def.metric_key] : state.values[def.metric_key];
+      var dirty = Object.prototype.hasOwnProperty.call(state.dirty, def.metric_key);
+      var control = "";
+      if (def.value_type === "boolean") control = renderBool(def, value);
+      else if (def.value_type === "text") control = '<input class="text-control metric-input" data-key="' + def.metric_key + '" value="' + escapeAttr(value == null ? "" : value) + '">';
+      else if (def.value_type === "number") control = renderNumber(def, value);
+      else control = '<button type="button" data-json="' + def.metric_key + '">事件</button>';
+      return '<div class="metric ' + (dirty ? "dirty" : "") + '" data-metric="' + escapeHtml(def.metric_key) + '"><div class="metric-label"><div class="metric-name">' + escapeHtml(label(def)) + '</div><div class="metric-meta">' + escapeHtml(def.unit || def.metric_key) + '</div></div>' + control + '</div>';
+    }
+    function renderNumber(def, value) {
+      var step = stepFor(def);
+      return '<div class="number-control"><button type="button" data-step="' + def.metric_key + '" data-delta="-' + step + '">−</button><input class="metric-input" data-key="' + def.metric_key + '" type="number" inputmode="decimal" step="' + step + '" value="' + escapeAttr(value == null ? "" : value) + '"><button type="button" data-step="' + def.metric_key + '" data-delta="' + step + '">+</button></div>';
+    }
+    function renderBool(def, value) {
+      var current = value === true ? "true" : value === false ? "false" : "";
+      return '<div class="tri"><button type="button" data-bool="' + def.metric_key + '" data-value="" class="' + (current === "" ? "active" : "") + '">—</button><button type="button" data-bool="' + def.metric_key + '" data-value="false" class="' + (current === "false" ? "active" : "") + '">否</button><button type="button" data-bool="' + def.metric_key + '" data-value="true" class="' + (current === "true" ? "active" : "") + '">是</button></div>';
+    }
+    function renderEvents() {
+      var events = state.events || [];
+      var list = events.length ? events.slice(0, 24).map(function (event) {
+        var time = String(event.occurred_at || "").slice(11, 16);
+        var value = event.value == null ? "" : JSON.stringify(event.value);
+        if (typeof event.value === "number" || typeof event.value === "string" || typeof event.value === "boolean") value = String(event.value);
+        return '<div class="event-item">' + escapeHtml(time + " " + event.event_type + " " + (event.metric_key || "") + " " + value) + '</div>';
+      }).join("") : '<div class="event-item">暂无事件</div>';
+      return '<div class="section ' + activeClass("events") + '" data-section="events"><div class="section-title"><h2>事件</h2></div>' +
+        '<div class="event-panel"><div class="event-row"><input id="doseMg" type="number" inputmode="decimal" placeholder="托莫西汀 mg"><button class="blue" type="button" data-event="medicine">记录服药</button></div><div class="event-row three"><button type="button" data-dose="10">10mg</button><button type="button" data-dose="20">20mg</button><button type="button" data-dose="40">40mg</button></div></div>' +
+        '<div class="event-panel"><div class="event-row"><select id="strengthExercise"><option value="push_press">推举</option><option value="squat">深蹲</option><option value="deadlift">硬拉</option><option value="bench_press">卧推</option></select><button class="blue" type="button" data-event="strength">记录训练</button></div><div class="event-row three"><input id="strengthWeight" type="number" inputmode="decimal" placeholder="kg"><input id="strengthSets" type="number" inputmode="numeric" placeholder="组"><input id="strengthReps" type="number" inputmode="numeric" placeholder="次"></div></div>' +
+        '<div class="events-list">' + list + '</div></div>';
+    }
+    function handleInput(event) {
+      var input = event.target.closest(".metric-input");
+      if (!input) return;
+      var key = input.dataset.key;
+      var def = findDef(key);
+      if (!def) return;
+      var value = input.value;
+      if (value === "") setDirty(key, null);
+      else if (def.value_type === "number") setDirty(key, Number(value));
+      else setDirty(key, value);
+    }
+    function handleClick(event) {
+      var step = event.target.closest("[data-step]");
+      if (step) {
+        var key = step.dataset.step;
+        var input = el.content.querySelector('input[data-key="' + cssEscape(key) + '"]');
+        var current = Number(input.value || 0);
+        var next = roundNumber(current + Number(step.dataset.delta || 0));
+        input.value = String(next);
+        setDirty(key, next);
+        renderAll();
+        return;
+      }
+      var bool = event.target.closest("[data-bool]");
+      if (bool) {
+        var raw = bool.dataset.value;
+        var value = raw === "" ? null : raw === "true";
+        setDirty(bool.dataset.bool, value);
+        renderAll();
+        return;
+      }
+      var dose = event.target.closest("[data-dose]");
+      if (dose) {
+        var doseInput = document.getElementById("doseMg");
+        if (doseInput) doseInput.value = dose.dataset.dose;
+        return;
+      }
+      var eventBtn = event.target.closest("[data-event]");
+      if (eventBtn && eventBtn.dataset.event === "medicine") recordMedicine();
+      if (eventBtn && eventBtn.dataset.event === "strength") recordStrength();
+    }
+    function setDirty(key, value) {
+      state.dirty[key] = value;
+      setStatus("未保存");
+    }
+    async function saveDirty() {
+      var keys = Object.keys(state.dirty);
+      if (!keys.length) {
+        showToast("没有改动");
+        return;
+      }
+      var body = { local_date: state.date, metrics: state.dirty };
+      var snapshot = Object.assign({}, state.dirty);
+      state.dirty = {};
+      renderAll();
+      try {
+        await sendOrQueue("/api/metrics", "POST", body);
+        Object.keys(snapshot).forEach(function (key) { state.values[key] = snapshot[key]; });
+        showToast("已保存");
+        await loadDay();
+      } catch (err) {
+        showToast("已排队");
+      }
+    }
+    async function recordMedicine() {
+      var input = document.getElementById("doseMg");
+      var dose = Number(input && input.value || 0);
+      if (!dose) return showToast("填剂量");
+      var body = {
+        local_date: state.date,
+        time: shanghaiTime(),
+        event_type: "medicine_dose",
+        metric_key: "atomoxetine_dose_mg",
+        value_type: "number",
+        value: dose,
+        rollup_metric_key: "atomoxetine_total_mg",
+        delta: dose,
+        idempotency_key: uid()
+      };
+      try {
+        await sendOrQueue("/api/event", "POST", body);
+        if (input) input.value = "";
+        showToast("已记录");
+        await loadDay();
+      } catch (_) {
+        showToast("已排队");
+      }
+    }
+    async function recordStrength() {
+      var exercise = document.getElementById("strengthExercise").value;
+      var weight = Number(document.getElementById("strengthWeight").value || 0);
+      var sets = Number(document.getElementById("strengthSets").value || 0);
+      var reps = Number(document.getElementById("strengthReps").value || 0);
+      if (!weight || !sets || !reps) return showToast("填重量组次");
+      var key = "strength_" + exercise + "_set";
+      var body = {
+        local_date: state.date,
+        time: shanghaiTime(),
+        event_type: "strength_set",
+        metric_key: key,
+        value_type: "json",
+        value: { exercise: exercise, weight_kg: weight, sets: sets, reps: reps },
+        idempotency_key: uid()
+      };
+      try {
+        await sendOrQueue("/api/event", "POST", body);
+        showToast("已记录");
+        await loadDay();
+      } catch (_) {
+        showToast("已排队");
+      }
+    }
+    function findDef(key) {
+      return state.defs.find(function (d) { return d.metric_key === key; });
+    }
+    function orderIndex(cat) {
+      var index = CATEGORY_ORDER.indexOf(cat);
+      return index === -1 ? 999 : index;
+    }
+    function unique(list) {
+      return Array.from(new Set(list));
+    }
+    function activeClass(key) {
+      return state.active === key ? "active" : "";
+    }
+    function label(def) {
+      return String(def.label || def.metric_key).replace(/\n+/g, "\n");
+    }
+    function stepFor(def) {
+      var key = def.metric_key;
+      if (key.indexOf("weight") !== -1 || key.indexOf("glucose") !== -1) return 0.1;
+      if (key.indexOf("hours") !== -1) return 0.5;
+      if (key.indexOf("_g") !== -1) return 50;
+      if (def.unit === "scoop") return 0.25;
+      return 1;
+    }
+    function roundNumber(value) {
+      return Math.round(value * 100) / 100;
+    }
+    function escapeHtml(value) {
+      return String(value == null ? "" : value).replace(/[&<>"']/g, function (ch) {
+        return ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[ch];
+      });
+    }
+    function escapeAttr(value) {
+      return escapeHtml(value);
+    }
+    function cssEscape(value) {
+      if (window.CSS && CSS.escape) return CSS.escape(value);
+      return String(value).replace(/"/g, '\\"');
+    }
+    boot();
+  })();
+  </script>
+</body>
+</html>
