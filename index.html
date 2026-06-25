@@ -9,23 +9,10 @@
   <meta name="apple-mobile-web-app-title" content="每日数据">
   <link rel="manifest" href="/personal-metrics-pwa/manifest.webmanifest">
   <link rel="icon" href="/personal-metrics-pwa/icon.svg">
-  <link rel="apple-touch-icon" href="/personal-metrics-pwa/icon.svg">
+  <link rel="apple-touch-icon" href="/personal-metrics-pwa/apple-touch-icon.png">
   <title>每日数据</title>
   <style>
-    :root {
-      color-scheme: light;
-      --bg: #f4f6f8;
-      --panel: #ffffff;
-      --ink: #111827;
-      --muted: #667085;
-      --line: #d7dde5;
-      --soft: #eef2f6;
-      --accent: #0f766e;
-      --accent-2: #2563eb;
-      --danger: #b42318;
-      --warn: #9a6700;
-      --tap: 46px;
-    }
+    :root { color-scheme: light; --bg: #f4f6f8; --panel: #ffffff; --ink: #111827; --muted: #667085; --line: #d7dde5; --soft: #eef2f6; --accent: #0f766e; --accent-2: #2563eb; --gold: #b87503; --danger: #b42318; --warn: #9a6700; --tap: 46px; }
     * { box-sizing: border-box; }
     html, body { margin: 0; min-height: 100%; background: var(--bg); color: var(--ink); font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif; letter-spacing: 0; }
     body { padding: env(safe-area-inset-top) 0 env(safe-area-inset-bottom); }
@@ -36,6 +23,7 @@
     button.ghost { background: transparent; }
     button.icon { width: var(--tap); padding: 0; display: inline-grid; place-items: center; }
     button.active { background: var(--ink); color: #fff; border-color: var(--ink); }
+    button:disabled { opacity: .45; }
     input, select, textarea { width: 100%; min-height: var(--tap); border: 1px solid var(--line); border-radius: 8px; background: #fff; color: var(--ink); padding: 10px 12px; }
     textarea { min-height: 84px; resize: vertical; }
     .hidden { display: none !important; }
@@ -51,18 +39,11 @@
     .status { font-size: 12px; color: var(--muted); text-align: right; white-space: nowrap; }
     .tools { position: sticky; top: 67px; z-index: 15; padding: 8px 10px 10px; background: rgba(244,246,248,.96); border-bottom: 1px solid var(--line); backdrop-filter: blur(14px); }
     .search-row { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: center; }
-    #searchInput { background: #fff; }
     .filters { display: flex; gap: 6px; overflow-x: auto; padding-top: 8px; scrollbar-width: none; }
     .filters button { min-height: 36px; flex: 0 0 auto; padding: 0 10px; border-radius: 999px; font-size: 14px; }
     .summary { display: flex; justify-content: space-between; gap: 10px; padding: 8px 2px 0; color: var(--muted); font-size: 12px; }
-    .summary strong { color: var(--ink); }
+    .quick-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding-top: 8px; }
     .content { padding: 10px 10px 96px; max-width: 980px; margin: 0 auto; }
-    .event-strip { display: grid; gap: 8px; margin-bottom: 10px; }
-    .event-card { border: 1px solid var(--line); border-radius: 8px; background: var(--panel); padding: 10px; display: grid; gap: 8px; }
-    .event-card h2 { margin: 0; font-size: 15px; }
-    .event-grid { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: center; }
-    .dose-buttons { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
-    .strength-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; }
     .section-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; padding: 8px 2px; }
     .section-head h2 { margin: 0; font-size: 18px; }
     .section-head span { color: var(--muted); font-size: 12px; }
@@ -72,13 +53,13 @@
     .metric-main { min-width: 0; display: grid; gap: 5px; }
     .metric-title-row { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 8px; align-items: start; }
     .star { min-height: 34px; width: 34px; padding: 0; color: #98a2b3; }
-    .star.on { color: #b87503; border-color: #e7c06a; background: #fff8e6; }
+    .star.on { color: var(--gold); border-color: #e7c06a; background: #fff8e6; }
     .metric-name { font-size: 16px; font-weight: 700; line-height: 1.3; white-space: normal; overflow-wrap: break-word; }
     .metric-desc { color: var(--muted); font-size: 13px; line-height: 1.35; overflow-wrap: break-word; }
     .metric-meta { display: flex; flex-wrap: wrap; gap: 5px; }
     .pill { display: inline-flex; align-items: center; min-height: 24px; padding: 2px 8px; border-radius: 999px; background: var(--soft); color: #475467; font-size: 12px; }
     .metric-detail { display: none; border-top: 1px solid var(--line); padding-top: 8px; color: #344054; font-size: 12px; line-height: 1.45; }
-    .metric.expanded .metric-detail { display: block; }
+    .metric.expanded .metric-detail, .dense-row.expanded .metric-detail { display: block; }
     .detail-grid { display: grid; gap: 5px; }
     .detail-grid code { color: #344054; background: #f8fafc; border: 1px solid var(--line); border-radius: 6px; padding: 1px 4px; overflow-wrap: anywhere; }
     .detail-grid pre { margin: 4px 0 0; padding: 8px; background: #f8fafc; border: 1px solid var(--line); border-radius: 6px; overflow-x: auto; white-space: pre-wrap; }
@@ -86,599 +67,116 @@
     .number-control { display: grid; grid-template-columns: 46px minmax(0, 1fr) 46px; gap: 6px; align-items: center; width: 100%; }
     .number-control input { text-align: center; padding-left: 4px; padding-right: 4px; }
     .tri { display: grid; grid-template-columns: repeat(3, minmax(48px, 1fr)); gap: 6px; width: 100%; }
+    .dense-list { display: grid; gap: 5px; }
+    .dense-row { display: grid; grid-template-columns: 34px minmax(0, 1fr) auto 40px; gap: 8px; align-items: center; padding: 8px; border: 1px solid var(--line); border-radius: 8px; background: var(--panel); }
+    .dense-row .star { width: 34px; min-height: 34px; }
+    .dense-label { font-size: 14px; font-weight: 650; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .dense-sub { color: var(--muted); font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .dense-value { font-size: 15px; font-weight: 750; text-align: right; max-width: 128px; overflow-wrap: anywhere; }
+    .dense-row .metric-detail { grid-column: 1 / -1; }
+    .backfill { display: none; margin-bottom: 10px; padding: 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--panel); gap: 8px; }
+    .backfill.open { display: grid; }
+    .backfill h2 { margin: 0; font-size: 17px; }
+    .backfill-grid { display: grid; gap: 8px; }
+    .backfill-grid.two { grid-template-columns: 1fr 1fr; }
+    .backfill-result { color: var(--muted); font-size: 13px; line-height: 1.45; }
+    .backfill-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
     .empty { border: 1px dashed var(--line); border-radius: 8px; padding: 18px; color: var(--muted); background: rgba(255,255,255,.72); }
-    .bottom { position: fixed; left: 0; right: 0; bottom: 0; z-index: 25; display: grid; grid-template-columns: 1fr auto auto; gap: 8px; align-items: center; padding: 10px calc(10px + env(safe-area-inset-right)) calc(10px + env(safe-area-inset-bottom)) calc(10px + env(safe-area-inset-left)); background: rgba(244,246,248,.97); border-top: 1px solid var(--line); backdrop-filter: blur(14px); }
+    .bottom { position: fixed; left: 0; right: 0; bottom: 0; z-index: 25; display: grid; grid-template-columns: 1fr auto auto auto; gap: 8px; align-items: center; padding: 10px calc(10px + env(safe-area-inset-right)) calc(10px + env(safe-area-inset-bottom)) calc(10px + env(safe-area-inset-left)); background: rgba(244,246,248,.97); border-top: 1px solid var(--line); backdrop-filter: blur(14px); }
     .pending { color: var(--warn); font-size: 13px; }
     .toast { position: fixed; left: 12px; right: 12px; bottom: calc(76px + env(safe-area-inset-bottom)); padding: 12px; border-radius: 8px; background: #20231f; color: #fff; z-index: 30; text-align: center; opacity: 0; transform: translateY(calc(100% + 90px)); transition: transform .2s ease, opacity .2s ease; pointer-events: none; }
     .toast.show { opacity: 1; transform: translateY(0); }
-    @media (min-width: 760px) {
-      .tools { top: 68px; }
-      .content { padding-left: 14px; padding-right: 14px; }
-      .event-strip { grid-template-columns: 1fr 1fr; }
-      .metric { grid-template-columns: minmax(0, 1fr) minmax(230px, 300px); align-items: center; }
-      .metric-detail { grid-column: 1 / -1; }
-      .metric-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-      .metric-list .metric { grid-template-columns: 1fr; }
-    }
+    @media (min-width: 760px) { .tools { top: 68px; } .content { padding-left: 14px; padding-right: 14px; } .quick-actions { grid-template-columns: repeat(4, 1fr); } .metric { grid-template-columns: minmax(0, 1fr) minmax(230px, 300px); align-items: center; } .metric-detail { grid-column: 1 / -1; } .metric-list { grid-template-columns: repeat(2, minmax(0, 1fr)); } .metric-list .metric { grid-template-columns: 1fr; } .backfill-grid { grid-template-columns: 1fr 1fr; } }
   </style>
 </head>
 <body>
-  <main id="login" class="login hidden">
-    <h1>每日数据</h1>
-    <form id="loginForm">
-      <input id="passphrase" type="password" autocomplete="current-password" placeholder="登录口令">
-      <button class="primary" type="submit">进入</button>
-    </form>
-    <div id="loginMsg" class="status"></div>
-  </main>
-
-  <main id="app" class="app hidden">
-    <header class="topbar">
-      <button id="todayBtn" class="ghost" type="button">今天</button>
-      <div class="datebar">
-        <button id="prevDay" type="button" aria-label="前一天">‹</button>
-        <input id="dateInput" type="date">
-        <button id="nextDay" type="button" aria-label="后一天">›</button>
-      </div>
-      <div id="status" class="status">-</div>
-    </header>
-    <section class="tools">
-      <div class="search-row">
-        <input id="searchInput" type="search" placeholder="搜索字段、别名、说明">
-        <button id="clearSearch" class="icon" type="button" aria-label="清空搜索">×</button>
-      </div>
-      <nav id="filters" class="filters" aria-label="字段筛选"></nav>
-      <div class="summary"><span id="scopeLabel">-</span><span id="dirtyLabel">-</span></div>
-    </section>
-    <section id="content" class="content"></section>
-    <footer class="bottom">
-      <div id="pending" class="pending">无待同步</div>
-      <button id="syncBtn" type="button">同步</button>
-      <button id="saveBtn" class="primary" type="button">保存</button>
-    </footer>
-    <div id="toast" class="toast"></div>
-  </main>
-
+  <main id="login" class="login hidden"><h1>每日数据</h1><form id="loginForm"><input id="passphrase" type="password" autocomplete="current-password" placeholder="登录口令"><button class="primary" type="submit">进入</button></form><div id="loginMsg" class="status"></div></main>
+  <main id="app" class="app hidden"><header class="topbar"><button id="todayBtn" class="ghost" type="button">今天</button><div class="datebar"><button id="prevDay" type="button" aria-label="前一天">‹</button><input id="dateInput" type="date"><button id="nextDay" type="button" aria-label="后一天">›</button></div><div id="status" class="status">-</div></header><section class="tools"><div class="search-row"><input id="searchInput" type="search" placeholder="搜索字段、别名、说明"><button id="clearSearch" class="icon" type="button" aria-label="清空搜索">×</button></div><nav id="filters" class="filters" aria-label="字段筛选"></nav><div class="quick-actions"><button id="firstMissingBtn" type="button">第一个待填</button><button id="backfillToggle" type="button">稳定值补录</button></div><div class="summary"><span id="scopeLabel">-</span><span id="dirtyLabel">-</span></div></section><section id="content" class="content"></section><footer class="bottom"><div id="pending" class="pending">无待同步</div><button id="undoBtn" type="button">撤销</button><button id="syncBtn" type="button">同步</button><button id="saveBtn" class="primary" type="button">保存</button></footer><div id="toast" class="toast"></div></main>
   <script>
   (function () {
     var BASE = "https://mumcofuervklloaotpih.supabase.co/functions/v1/metrics-pwa";
-    var CATEGORY_NAMES = {
-      body: "身体",
-      health: "健康",
-      medicine: "药物",
-      supplement: "补剂",
-      food: "食物",
-      learning: "学习",
-      media: "媒体",
-      media_sleep: "媒体睡眠",
-      mood_productivity: "心情效率",
-      productivity: "效率",
-      sleep: "睡眠",
-      habit: "习惯",
-      pet: "宠物",
-      general: "其他"
-    };
+    var CATEGORY_NAMES = { body: "身体", health: "健康", medicine: "药物", supplement: "补剂", food: "食物", learning: "学习", media: "媒体", media_sleep: "媒体睡眠", mood_productivity: "心情效率", productivity: "效率", sleep: "睡眠", habit: "习惯", pet: "宠物", general: "其他" };
     var CATEGORY_ORDER = ["body", "health", "sleep", "mood_productivity", "productivity", "medicine", "supplement", "food", "learning", "media", "media_sleep", "habit", "pet", "general"];
-    var DEFAULT_PINNED = [
-      "body_weight_clothed_jin",
-      "blood_glucose_yuyue550",
-      "blood_glucose_post_meal_hours",
-      "atomoxetine_total_mg",
-      "eggs_count",
-      "daily_nuts_bag_count",
-      "reading_or_audiobook",
-      "learn_english_on_x",
-      "watched_financial_news"
-    ];
-    var state = {
-      authed: false,
-      date: shanghaiDate(0),
-      defs: [],
-      values: {},
-      events: [],
-      dirty: {},
-      filter: localStorage.getItem("metricsPwaFilter") || "pinned",
-      query: "",
-      expanded: {},
-      pinned: loadPinned(),
-      token: localStorage.getItem("metricsPwaToken") || "",
-      queue: loadQueue()
-    };
-
-    var el = {
-      login: document.getElementById("login"),
-      app: document.getElementById("app"),
-      loginForm: document.getElementById("loginForm"),
-      passphrase: document.getElementById("passphrase"),
-      loginMsg: document.getElementById("loginMsg"),
-      dateInput: document.getElementById("dateInput"),
-      status: document.getElementById("status"),
-      searchInput: document.getElementById("searchInput"),
-      clearSearch: document.getElementById("clearSearch"),
-      filters: document.getElementById("filters"),
-      scopeLabel: document.getElementById("scopeLabel"),
-      dirtyLabel: document.getElementById("dirtyLabel"),
-      content: document.getElementById("content"),
-      pending: document.getElementById("pending"),
-      saveBtn: document.getElementById("saveBtn"),
-      toast: document.getElementById("toast")
-    };
-
-    function shanghaiDate(offset) {
-      var base = new Date(Date.now() + offset * 86400000);
-      return new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Shanghai", year: "numeric", month: "2-digit", day: "2-digit" }).format(base);
-    }
-    function shanghaiTime() {
-      return new Intl.DateTimeFormat("en-GB", { timeZone: "Asia/Shanghai", hour: "2-digit", minute: "2-digit", hour12: false }).format(new Date());
-    }
-    function addDays(date, offset) {
-      var parts = date.split("-").map(Number);
-      var d = new Date(Date.UTC(parts[0], parts[1] - 1, parts[2] + offset));
-      return d.toISOString().slice(0, 10);
-    }
-    function uid() {
-      return "pwa-" + Date.now() + "-" + Math.random().toString(16).slice(2);
-    }
-    function showToast(text) {
-      el.toast.textContent = text;
-      el.toast.classList.add("show");
-      setTimeout(function () { el.toast.classList.remove("show"); }, 1800);
-    }
-    function setStatus(text) {
-      el.status.textContent = text;
-    }
-    function loadQueue() {
-      try { return JSON.parse(localStorage.getItem("metricsPwaQueue") || "[]"); } catch (_) { return []; }
-    }
-    function loadPinned() {
-      try {
-        var saved = JSON.parse(localStorage.getItem("metricsPwaPinnedKeys") || "null");
-        if (Array.isArray(saved) && saved.length) return saved;
-      } catch (_) {}
-      return DEFAULT_PINNED.slice();
-    }
-    function savePinned() {
-      localStorage.setItem("metricsPwaPinnedKeys", JSON.stringify(state.pinned));
-    }
-    function saveQueue() {
-      localStorage.setItem("metricsPwaQueue", JSON.stringify(state.queue));
-      updateFooter();
-    }
-    function enqueue(item) {
-      state.queue.push(item);
-      saveQueue();
-      showToast("已加入待同步");
-    }
-    async function api(path, options) {
-      var opts = options || {};
-      opts.credentials = "same-origin";
-      opts.headers = Object.assign({ "content-type": "application/json" }, opts.headers || {});
-      if (state.token) opts.headers.Authorization = "Bearer " + state.token;
-      var res = await fetch(BASE + path, opts);
-      var data = await res.json().catch(function () { return {}; });
-      if (res.status === 401) {
-        state.authed = false;
-        state.token = "";
-        localStorage.removeItem("metricsPwaToken");
-        showLogin();
-        throw new Error("Unauthorized");
-      }
-      if (!res.ok || data.ok === false) throw new Error(data.error || "请求失败");
-      return data;
-    }
-    async function sendOrQueue(path, method, body) {
-      var item = { id: uid(), path: path, method: method, body: body, created_at: new Date().toISOString() };
-      if (!navigator.onLine) {
-        enqueue(item);
-        return { queued: true };
-      }
-      try {
-        return await api(path, { method: method, body: JSON.stringify(body) });
-      } catch (err) {
-        if (String(err.message) !== "Unauthorized") enqueue(item);
-        throw err;
-      }
-    }
-    async function flushQueue() {
-      if (!state.queue.length || !navigator.onLine) {
-        saveQueue();
-        return;
-      }
-      var next = [];
-      for (var i = 0; i < state.queue.length; i += 1) {
-        var item = state.queue[i];
-        try {
-          await api(item.path, { method: item.method, body: JSON.stringify(item.body) });
-        } catch (err) {
-          next = state.queue.slice(i);
-          break;
-        }
-      }
-      state.queue = next;
-      saveQueue();
-      if (!state.queue.length) {
-        showToast("同步完成");
-        await loadDay();
-      }
-    }
-    function showLogin() {
-      el.login.classList.remove("hidden");
-      el.app.classList.add("hidden");
-      setTimeout(function () { el.passphrase.focus(); }, 50);
-    }
-    function showApp() {
-      el.login.classList.add("hidden");
-      el.app.classList.remove("hidden");
-    }
-    async function boot() {
-      registerSW();
-      saveQueue();
-      el.dateInput.value = state.date;
-      bindEvents();
-      try {
-        await api("/api/session");
-        state.authed = true;
-        showApp();
-        await loadSchema();
-        await loadDay();
-        await flushQueue();
-      } catch (_) {
-        showLogin();
-      }
-    }
-    function registerSW() {
-      if ("serviceWorker" in navigator) {
-        navigator.serviceWorker.register("/personal-metrics-pwa/sw.js", { scope: "/personal-metrics-pwa/" }).catch(function () {});
-      }
-    }
-    function bindEvents() {
-      el.loginForm.addEventListener("submit", async function (event) {
-        event.preventDefault();
-        el.loginMsg.textContent = "验证中";
-        try {
-          var result = await api("/api/login", { method: "POST", body: JSON.stringify({ passphrase: el.passphrase.value }) });
-          state.token = result.token || "";
-          if (state.token) localStorage.setItem("metricsPwaToken", state.token);
-          el.passphrase.value = "";
-          state.authed = true;
-          showApp();
-          await loadSchema();
-          await loadDay();
-          el.loginMsg.textContent = "";
-        } catch (err) {
-          el.loginMsg.textContent = "口令不对或尝试过多";
-        }
-      });
-      document.getElementById("todayBtn").addEventListener("click", function () { changeDate(shanghaiDate(0)); });
-      document.getElementById("prevDay").addEventListener("click", function () { changeDate(addDays(state.date, -1)); });
-      document.getElementById("nextDay").addEventListener("click", function () { changeDate(addDays(state.date, 1)); });
-      el.dateInput.addEventListener("change", function () { changeDate(el.dateInput.value); });
-      el.searchInput.addEventListener("input", function () { state.query = el.searchInput.value.trim(); renderAll(); });
-      el.clearSearch.addEventListener("click", function () { el.searchInput.value = ""; state.query = ""; renderAll(); });
-      document.getElementById("saveBtn").addEventListener("click", saveDirty);
-      document.getElementById("syncBtn").addEventListener("click", flushQueue);
-      window.addEventListener("online", flushQueue);
-      el.filters.addEventListener("click", function (event) {
-        var btn = event.target.closest("button[data-filter]");
-        if (!btn) return;
-        state.filter = btn.dataset.filter;
-        localStorage.setItem("metricsPwaFilter", state.filter);
-        renderAll();
-      });
-      el.content.addEventListener("input", handleInput);
-      el.content.addEventListener("click", handleClick);
-    }
-    async function changeDate(date) {
-      state.date = date;
-      el.dateInput.value = date;
-      state.dirty = {};
-      await loadDay();
-    }
-    async function loadSchema() {
-      setStatus("加载字段");
-      var data = await api("/api/schema");
-      state.defs = data.definitions || [];
-      renderAll();
-    }
-    async function loadDay() {
-      setStatus("读取中");
-      var data = await api("/api/day?date=" + encodeURIComponent(state.date));
-      state.values = data.values || {};
-      state.events = data.events || [];
-      renderAll();
-      setStatus("已读取");
-    }
-    function renderAll() {
-      renderFilters();
-      renderContent();
-      updateFooter();
-    }
-    function renderFilters() {
-      var cats = categories();
-      var chips = [
-        { key: "pinned", name: "常用", count: pinnedDefs().length },
-        { key: "all", name: "全部", count: editableDefs().length },
-        { key: "filled", name: "已填", count: filledDefs().length }
-      ];
-      cats.forEach(function (cat) { chips.push({ key: "cat:" + cat, name: CATEGORY_NAMES[cat] || cat, count: defsForCategory(cat).length }); });
-      el.filters.innerHTML = chips.map(function (chip) {
-        return '<button type="button" data-filter="' + escapeAttr(chip.key) + '" class="' + (state.filter === chip.key ? 'active' : '') + '">' + escapeHtml(chip.name) + ' ' + chip.count + '</button>';
-      }).join("");
-      el.clearSearch.classList.toggle("hidden", !state.query);
-    }
-    function renderContent() {
-      var defs = visibleDefs();
-      var title = scopeTitle(defs.length);
-      var html = renderEventsPanel();
-      html += '<div class="section-head"><h2>' + escapeHtml(title) + '</h2><span>' + escapeHtml(state.query ? '搜索覆盖全部字段' : '点星标加入常用') + '</span></div>';
-      if (!defs.length) {
-        html += '<div class="empty">没有匹配字段。换个关键词，或切到“全部”。</div>';
-      } else {
-        html += '<div class="metric-list">' + defs.map(renderMetric).join("") + '</div>';
-      }
-      el.content.innerHTML = html;
-      el.scopeLabel.textContent = title + ' · 显示 ' + defs.length + ' 项';
-    }
-    function renderEventsPanel() {
-      return '<div class="event-strip">' +
-        '<div class="event-card"><h2>服药事件</h2><div class="event-grid"><input id="doseMg" type="number" inputmode="decimal" placeholder="mg"><button class="blue" type="button" data-event="medicine">记录</button></div><div class="dose-buttons"><button type="button" data-dose="10">10</button><button type="button" data-dose="20">20</button><button type="button" data-dose="40">40</button></div></div>' +
-        '<div class="event-card"><h2>力量训练</h2><div class="event-grid"><select id="strengthExercise"><option value="push_press">推举</option><option value="squat">深蹲</option><option value="deadlift">硬拉</option><option value="bench_press">卧推</option></select><button class="blue" type="button" data-event="strength">记录</button></div><div class="strength-grid"><input id="strengthWeight" type="number" inputmode="decimal" placeholder="kg"><input id="strengthSets" type="number" inputmode="numeric" placeholder="组"><input id="strengthReps" type="number" inputmode="numeric" placeholder="次"></div></div>' +
-        '</div>';
-    }
-    function renderMetric(def) {
-      var value = Object.prototype.hasOwnProperty.call(state.dirty, def.metric_key) ? state.dirty[def.metric_key] : state.values[def.metric_key];
-      var dirty = Object.prototype.hasOwnProperty.call(state.dirty, def.metric_key);
-      var expanded = !!state.expanded[def.metric_key];
-      var pinned = state.pinned.indexOf(def.metric_key) !== -1;
-      return '<article class="metric ' + (dirty ? 'dirty ' : '') + (expanded ? 'expanded' : '') + '" data-metric="' + escapeAttr(def.metric_key) + '">' +
-        '<div class="metric-main"><div class="metric-title-row"><button class="star ' + (pinned ? 'on' : '') + '" type="button" data-pin="' + escapeAttr(def.metric_key) + '" aria-label="常用">★</button><div><div class="metric-name">' + escapeHtml(cleanLabel(def)) + '</div><div class="metric-desc">' + escapeHtml(shortDescription(def)) + '</div></div><button class="icon" type="button" data-info="' + escapeAttr(def.metric_key) + '" aria-label="字段说明">i</button></div>' +
-        '<div class="metric-meta">' + metaPills(def).map(function (item) { return '<span class="pill">' + escapeHtml(item) + '</span>'; }).join("") + '</div></div>' +
-        '<div class="metric-control">' + renderControl(def, value) + '</div>' + renderMetricDetail(def) + '</article>';
-    }
-    function renderControl(def, value) {
-      if (def.value_type === "boolean") return renderBool(def, value);
-      if (def.value_type === "text") return '<input class="metric-input" data-key="' + escapeAttr(def.metric_key) + '" value="' + escapeAttr(value == null ? "" : value) + '" placeholder="输入文本">';
-      if (def.value_type === "number") return renderNumber(def, value);
-      return '<button type="button" data-json="' + escapeAttr(def.metric_key) + '">用事件记录</button>';
-    }
-    function renderNumber(def, value) {
-      var step = stepFor(def);
-      return '<div class="number-control"><button type="button" data-step="' + escapeAttr(def.metric_key) + '" data-delta="-' + step + '">−</button><input class="metric-input" data-key="' + escapeAttr(def.metric_key) + '" type="number" inputmode="decimal" step="' + step + '" value="' + escapeAttr(value == null ? "" : value) + '"><button type="button" data-step="' + escapeAttr(def.metric_key) + '" data-delta="' + step + '">+</button></div>';
-    }
-    function renderBool(def, value) {
-      var current = value === true ? "true" : value === false ? "false" : "";
-      return '<div class="tri"><button type="button" data-bool="' + escapeAttr(def.metric_key) + '" data-value="" class="' + (current === "" ? "active" : "") + '">—</button><button type="button" data-bool="' + escapeAttr(def.metric_key) + '" data-value="false" class="' + (current === "false" ? "active" : "") + '">否</button><button type="button" data-bool="' + escapeAttr(def.metric_key) + '" data-value="true" class="' + (current === "true" ? "active" : "") + '">是</button></div>';
-    }
-    function renderMetricDetail(def) {
-      var lines = [];
-      lines.push('<div><strong>说明：</strong>' + escapeHtml(def.description || '数据库暂无说明') + '</div>');
-      lines.push('<div><strong>字段：</strong><code>' + escapeHtml(def.metric_key) + '</code></div>');
-      lines.push('<div><strong>格式：</strong>' + escapeHtml(def.value_type + (def.unit ? ' · ' + def.unit : '') + ' · ' + (CATEGORY_NAMES[def.category] || def.category || '其他')) + '</div>');
-      if (def.aliases && def.aliases.length) lines.push('<div><strong>别名：</strong>' + escapeHtml(def.aliases.join(' / ')) + '</div>');
-      if (def.source_headers && def.source_headers.length) lines.push('<div><strong>原表头：</strong>' + escapeHtml(def.source_headers.join(' / ')) + '</div>');
-      if (def.aggregation_method) lines.push('<div><strong>聚合：</strong>' + escapeHtml(def.aggregation_method) + '</div>');
-      var md = def.metadata || {};
-      if (md.note) lines.push('<div><strong>写入备注：</strong>' + escapeHtml(String(md.note)) + '</div>');
-      if (md.write_kind || md.write_action || md.source_column) lines.push('<div><strong>元数据：</strong>' + escapeHtml([md.write_kind, md.write_action, md.source_column && '列 ' + md.source_column].filter(Boolean).join(' · ')) + '</div>');
-      if (md.write_format) lines.push('<div><strong>写入样例：</strong><pre>' + escapeHtml(JSON.stringify(md.write_format, null, 2)) + '</pre></div>');
-      return '<div class="metric-detail"><div class="detail-grid">' + lines.join("") + '</div></div>';
-    }
-    function handleInput(event) {
-      var input = event.target.closest(".metric-input");
-      if (!input) return;
-      var key = input.dataset.key;
-      var def = findDef(key);
-      if (!def) return;
-      var value = input.value;
-      if (value === "") setDirty(key, null);
-      else if (def.value_type === "number") setDirty(key, Number(value));
-      else setDirty(key, value);
-    }
-    function handleClick(event) {
-      var pin = event.target.closest("[data-pin]");
-      if (pin) { togglePinned(pin.dataset.pin); return; }
-      var info = event.target.closest("[data-info]");
-      if (info) { state.expanded[info.dataset.info] = !state.expanded[info.dataset.info]; renderAll(); return; }
-      var step = event.target.closest("[data-step]");
-      if (step) {
-        var key = step.dataset.step;
-        var input = el.content.querySelector('input[data-key="' + cssEscape(key) + '"]');
-        var current = Number(input && input.value || 0);
-        var next = roundNumber(current + Number(step.dataset.delta || 0));
-        if (input) input.value = String(next);
-        setDirty(key, next);
-        renderAll();
-        return;
-      }
-      var bool = event.target.closest("[data-bool]");
-      if (bool) {
-        var raw = bool.dataset.value;
-        var value = raw === "" ? null : raw === "true";
-        setDirty(bool.dataset.bool, value);
-        renderAll();
-        return;
-      }
-      var dose = event.target.closest("[data-dose]");
-      if (dose) {
-        var doseInput = document.getElementById("doseMg");
-        if (doseInput) doseInput.value = dose.dataset.dose;
-        return;
-      }
-      var eventBtn = event.target.closest("[data-event]");
-      if (eventBtn && eventBtn.dataset.event === "medicine") recordMedicine();
-      if (eventBtn && eventBtn.dataset.event === "strength") recordStrength();
-    }
-    function setDirty(key, value) {
-      state.dirty[key] = value;
-      setStatus("未保存");
-      updateFooter();
-    }
-    async function saveDirty() {
-      var keys = Object.keys(state.dirty);
-      if (!keys.length) {
-        showToast("没有改动");
-        return;
-      }
-      var body = { local_date: state.date, metrics: state.dirty };
-      var snapshot = Object.assign({}, state.dirty);
-      state.dirty = {};
-      renderAll();
-      try {
-        await sendOrQueue("/api/metrics", "POST", body);
-        Object.keys(snapshot).forEach(function (key) { state.values[key] = snapshot[key]; });
-        showToast("已保存 " + keys.length + " 项");
-        await loadDay();
-      } catch (err) {
-        showToast("已排队");
-      }
-    }
-    async function recordMedicine() {
-      var input = document.getElementById("doseMg");
-      var dose = Number(input && input.value || 0);
-      if (!dose) return showToast("填剂量");
-      var body = {
-        local_date: state.date,
-        time: shanghaiTime(),
-        event_type: "medicine_dose",
-        metric_key: "atomoxetine_dose_mg",
-        value_type: "number",
-        value: dose,
-        rollup_metric_key: "atomoxetine_total_mg",
-        delta: dose,
-        idempotency_key: uid()
-      };
-      try {
-        await sendOrQueue("/api/event", "POST", body);
-        if (input) input.value = "";
-        showToast("已记录服药");
-        await loadDay();
-      } catch (_) {
-        showToast("已排队");
-      }
-    }
-    async function recordStrength() {
-      var exercise = document.getElementById("strengthExercise").value;
-      var weight = Number(document.getElementById("strengthWeight").value || 0);
-      var sets = Number(document.getElementById("strengthSets").value || 0);
-      var reps = Number(document.getElementById("strengthReps").value || 0);
-      if (!weight || !sets || !reps) return showToast("填重量组次");
-      var key = "strength_" + exercise + "_set";
-      var body = {
-        local_date: state.date,
-        time: shanghaiTime(),
-        event_type: "strength_set",
-        metric_key: key,
-        value_type: "json",
-        value: { exercise: exercise, weight_kg: weight, sets: sets, reps: reps },
-        idempotency_key: uid()
-      };
-      try {
-        await sendOrQueue("/api/event", "POST", body);
-        showToast("已记录训练");
-        await loadDay();
-      } catch (_) {
-        showToast("已排队");
-      }
-    }
-    function updateFooter() {
-      var dirtyCount = Object.keys(state.dirty).length;
-      el.pending.textContent = state.queue.length ? "待同步 " + state.queue.length : "无待同步";
-      el.saveBtn.textContent = dirtyCount ? "保存 " + dirtyCount : "保存";
-      el.dirtyLabel.textContent = dirtyCount ? "已改 " + dirtyCount + " 项" : "未修改";
-    }
-    function visibleDefs() {
-      var defs = editableDefs();
-      var q = state.query.toLowerCase();
-      if (q) return defs.filter(function (def) { return searchText(def).indexOf(q) !== -1; });
-      if (state.filter === "pinned") return pinnedDefs();
-      if (state.filter === "filled") return filledDefs();
-      if (state.filter.indexOf("cat:") === 0) return defsForCategory(state.filter.slice(4));
-      return defs;
-    }
-    function editableDefs() {
-      return state.defs.filter(function (d) { return d.category !== "strength_event" && d.category !== "medicine_event"; });
-    }
-    function pinnedDefs() {
-      var byKey = {};
-      editableDefs().forEach(function (def) { byKey[def.metric_key] = def; });
-      return state.pinned.map(function (key) { return byKey[key]; }).filter(Boolean);
-    }
-    function filledDefs() {
-      return editableDefs().filter(function (def) { return Object.prototype.hasOwnProperty.call(state.values, def.metric_key) || Object.prototype.hasOwnProperty.call(state.dirty, def.metric_key); });
-    }
-    function defsForCategory(cat) {
-      return editableDefs().filter(function (d) { return (d.category || "general") === cat; });
-    }
-    function categories() {
-      var cats = unique(editableDefs().map(function (d) { return d.category || "general"; }));
-      cats.sort(function (a, b) { return orderIndex(a) - orderIndex(b); });
-      return cats;
-    }
-    function scopeTitle(count) {
-      if (state.query) return '搜索“' + state.query + '”';
-      if (state.filter === "pinned") return "常用字段";
-      if (state.filter === "filled") return "已填写字段";
-      if (state.filter.indexOf("cat:") === 0) return CATEGORY_NAMES[state.filter.slice(4)] || state.filter.slice(4);
-      return "全部字段";
-    }
-    function togglePinned(key) {
-      var index = state.pinned.indexOf(key);
-      if (index === -1) state.pinned.unshift(key);
-      else state.pinned.splice(index, 1);
-      savePinned();
-      renderAll();
-    }
-    function findDef(key) {
-      return state.defs.find(function (d) { return d.metric_key === key; });
-    }
-    function orderIndex(cat) {
-      var index = CATEGORY_ORDER.indexOf(cat);
-      return index === -1 ? 999 : index;
-    }
-    function unique(list) {
-      return Array.from(new Set(list));
-    }
-    function cleanLabel(def) {
-      return String(def.label || def.metric_key).replace(/\n+/g, " ").replace(/\s+/g, " ").trim();
-    }
-    function shortDescription(def) {
-      var text = def.description || (def.aliases && def.aliases.length ? "别名：" + def.aliases.join(" / ") : "点 i 查看字段格式");
-      return text.length > 86 ? text.slice(0, 84) + "…" : text;
-    }
-    function metaPills(def) {
-      var out = [];
-      out.push(def.value_type || "value");
-      if (def.unit) out.push(def.unit);
-      out.push(CATEGORY_NAMES[def.category] || def.category || "其他");
-      if (def.metadata && def.metadata.source_column) out.push("列 " + def.metadata.source_column);
-      return out;
-    }
-    function searchText(def) {
-      return [def.metric_key, def.label, def.description, def.unit, def.category, (def.aliases || []).join(" "), (def.source_headers || []).join(" ")].join(" ").toLowerCase();
-    }
-    function stepFor(def) {
-      var key = def.metric_key;
-      if (key.indexOf("weight") !== -1 || key.indexOf("glucose") !== -1) return 0.1;
-      if (key.indexOf("hours") !== -1) return 0.5;
-      if (key.indexOf("_g") !== -1) return 50;
-      if (def.unit === "scoop") return 0.25;
-      return 1;
-    }
-    function roundNumber(value) {
-      return Math.round(value * 100) / 100;
-    }
-    function escapeHtml(value) {
-      return String(value == null ? "" : value).replace(/[&<>"']/g, function (char) {
-        return ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[char];
-      });
-    }
-    function escapeAttr(value) {
-      return escapeHtml(value);
-    }
-    function cssEscape(value) {
-      if (window.CSS && CSS.escape) return CSS.escape(value);
-      return String(value).replace(/[^a-zA-Z0-9_-]/g, "\\$&");
-    }
+    var DEFAULT_PINNED = ["body_weight_clothed_jin", "blood_glucose_yuyue550", "blood_glucose_post_meal_hours", "atomoxetine_total_mg", "eggs_count", "daily_nuts_bag_count", "reading_or_audiobook", "learn_english_on_x", "watched_financial_news"];
+    var state = { authed: false, date: shanghaiDate(0), defs: [], values: {}, events: [], dirty: {}, filter: localStorage.getItem("metricsPwaFilter") || "unfilled", query: "", expanded: {}, pinned: loadPinned(), token: localStorage.getItem("metricsPwaToken") || "", queue: loadQueue(), backfillOpen: false, backfillPreview: null, backfillTouchedStart: false, backfill: { metric: "", value: "", start: "", end: "" } };
+    var el = { login: document.getElementById("login"), app: document.getElementById("app"), loginForm: document.getElementById("loginForm"), passphrase: document.getElementById("passphrase"), loginMsg: document.getElementById("loginMsg"), dateInput: document.getElementById("dateInput"), status: document.getElementById("status"), searchInput: document.getElementById("searchInput"), clearSearch: document.getElementById("clearSearch"), filters: document.getElementById("filters"), firstMissingBtn: document.getElementById("firstMissingBtn"), backfillToggle: document.getElementById("backfillToggle"), scopeLabel: document.getElementById("scopeLabel"), dirtyLabel: document.getElementById("dirtyLabel"), content: document.getElementById("content"), pending: document.getElementById("pending"), undoBtn: document.getElementById("undoBtn"), saveBtn: document.getElementById("saveBtn"), toast: document.getElementById("toast") };
+    function shanghaiDate(offset) { var base = new Date(Date.now() + offset * 86400000); return new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Shanghai", year: "numeric", month: "2-digit", day: "2-digit" }).format(base); }
+    function shanghaiTime() { return new Intl.DateTimeFormat("en-GB", { timeZone: "Asia/Shanghai", hour: "2-digit", minute: "2-digit", hour12: false }).format(new Date()); }
+    function addDays(date, offset) { var parts = date.split("-").map(Number); var d = new Date(Date.UTC(parts[0], parts[1] - 1, parts[2] + offset)); return d.toISOString().slice(0, 10); }
+    function uid() { return "pwa-" + Date.now() + "-" + Math.random().toString(16).slice(2); }
+    function showToast(text) { el.toast.textContent = text; el.toast.classList.add("show"); setTimeout(function () { el.toast.classList.remove("show"); }, 1800); }
+    function setStatus(text) { el.status.textContent = text; }
+    function loadQueue() { try { return JSON.parse(localStorage.getItem("metricsPwaQueue") || "[]"); } catch (_) { return []; } }
+    function loadPinned() { try { var saved = JSON.parse(localStorage.getItem("metricsPwaPinnedKeys") || "null"); if (Array.isArray(saved) && saved.length) return saved; } catch (_) {} return DEFAULT_PINNED.slice(); }
+    function savePinned() { localStorage.setItem("metricsPwaPinnedKeys", JSON.stringify(state.pinned)); }
+    function saveQueue() { localStorage.setItem("metricsPwaQueue", JSON.stringify(state.queue)); updateFooter(); }
+    function enqueue(item) { state.queue.push(item); saveQueue(); showToast("已加入待同步"); }
+    function cacheKeyForDay(date) { return "metricsPwaDay:" + date; }
+    function saveSchemaCache(defs) { localStorage.setItem("metricsPwaSchema", JSON.stringify({ cached_at: new Date().toISOString(), definitions: defs })); }
+    function saveDayCache(date, data) { localStorage.setItem(cacheKeyForDay(date), JSON.stringify({ cached_at: new Date().toISOString(), data: data })); }
+    function readJson(key) { try { return JSON.parse(localStorage.getItem(key) || "null"); } catch (_) { return null; } }
+    function hydrateFromCache() { var schema = readJson("metricsPwaSchema"); var day = readJson(cacheKeyForDay(state.date)); var used = false; if (schema && Array.isArray(schema.definitions)) { state.defs = schema.definitions; used = true; } if (day && day.data) { state.values = day.data.values || {}; state.events = day.data.events || []; used = true; } if (used) { renderAll(); setStatus("本地缓存"); } }
+    async function api(path, options) { var opts = options || {}; opts.credentials = "same-origin"; opts.headers = Object.assign({ "content-type": "application/json" }, opts.headers || {}); if (state.token) opts.headers.Authorization = "Bearer " + state.token; var res = await fetch(BASE + path, opts); var data = await res.json().catch(function () { return {}; }); if (res.status === 401) { state.authed = false; state.token = ""; localStorage.removeItem("metricsPwaToken"); showLogin(); throw new Error("Unauthorized"); } if (!res.ok || data.ok === false) throw new Error(data.error || "请求失败"); return data; }
+    async function sendOrQueue(path, method, body) { var item = { id: uid(), path: path, method: method, body: body, created_at: new Date().toISOString() }; if (!navigator.onLine) { enqueue(item); return { queued: true }; } try { return await api(path, { method: method, body: JSON.stringify(body) }); } catch (err) { if (String(err.message) !== "Unauthorized") enqueue(item); throw err; } }
+    async function flushQueue() { if (!state.queue.length || !navigator.onLine) { saveQueue(); return; } var next = []; for (var i = 0; i < state.queue.length; i += 1) { var item = state.queue[i]; try { await api(item.path, { method: item.method, body: JSON.stringify(item.body) }); } catch (err) { next = state.queue.slice(i); break; } } state.queue = next; saveQueue(); if (!state.queue.length) { showToast("同步完成"); await loadDay(); } }
+    function showLogin() { el.login.classList.remove("hidden"); el.app.classList.add("hidden"); setTimeout(function () { el.passphrase.focus(); }, 50); }
+    function showApp() { el.login.classList.add("hidden"); el.app.classList.remove("hidden"); }
+    async function boot() { registerSW(); saveQueue(); el.dateInput.value = state.date; bindEvents(); if (state.token) { showApp(); hydrateFromCache(); } else { showLogin(); } try { if (state.token) await api("/api/session"); state.authed = true; showApp(); await loadSchema(); await loadDay(); await flushQueue(); } catch (_) { if (!state.defs.length) showLogin(); } }
+    function registerSW() { if ("serviceWorker" in navigator) { navigator.serviceWorker.register("/personal-metrics-pwa/sw.js", { scope: "/personal-metrics-pwa/" }).catch(function () {}); } }
+    function bindEvents() { el.loginForm.addEventListener("submit", async function (event) { event.preventDefault(); el.loginMsg.textContent = "验证中"; try { var result = await api("/api/login", { method: "POST", body: JSON.stringify({ passphrase: el.passphrase.value }) }); state.token = result.token || ""; if (state.token) localStorage.setItem("metricsPwaToken", state.token); el.passphrase.value = ""; state.authed = true; showApp(); await loadSchema(); await loadDay(); el.loginMsg.textContent = ""; } catch (err) { el.loginMsg.textContent = "口令不对或尝试过多"; } }); document.getElementById("todayBtn").addEventListener("click", function () { changeDate(shanghaiDate(0)); }); document.getElementById("prevDay").addEventListener("click", function () { changeDate(addDays(state.date, -1)); }); document.getElementById("nextDay").addEventListener("click", function () { changeDate(addDays(state.date, 1)); }); el.dateInput.addEventListener("change", function () { changeDate(el.dateInput.value); }); el.searchInput.addEventListener("input", function () { state.query = el.searchInput.value.trim(); renderAll(); }); el.clearSearch.addEventListener("click", function () { el.searchInput.value = ""; state.query = ""; renderAll(); }); document.getElementById("saveBtn").addEventListener("click", saveDirty); document.getElementById("syncBtn").addEventListener("click", flushQueue); el.undoBtn.addEventListener("click", undoDirty); el.firstMissingBtn.addEventListener("click", focusFirstMissing); el.backfillToggle.addEventListener("click", toggleBackfill); window.addEventListener("online", flushQueue); el.filters.addEventListener("click", function (event) { var btn = event.target.closest("button[data-filter]"); if (!btn) return; state.filter = btn.dataset.filter; localStorage.setItem("metricsPwaFilter", state.filter); renderAll(); }); el.content.addEventListener("input", handleInput); el.content.addEventListener("change", handleChange); el.content.addEventListener("click", handleClick); }
+    async function changeDate(date) { state.date = date; el.dateInput.value = date; state.dirty = {}; var cached = readJson(cacheKeyForDay(date)); if (cached && cached.data) { state.values = cached.data.values || {}; state.events = cached.data.events || []; renderAll(); setStatus("本地缓存"); } await loadDay(); }
+    async function loadSchema() { setStatus("加载字段"); var data = await api("/api/schema"); state.defs = data.definitions || []; saveSchemaCache(state.defs); renderAll(); }
+    async function loadDay() { setStatus("读取中"); var data = await api("/api/day?date=" + encodeURIComponent(state.date)); state.values = data.values || {}; state.events = data.events || []; saveDayCache(state.date, data); renderAll(); setStatus("已读取"); }
+    function renderAll() { renderFilters(); renderContent(); updateFooter(); }
+    function renderFilters() { var cats = categories(); var chips = [{ key: "unfilled", name: "待填", count: unfilledDefs().length }, { key: "pinned", name: "常用", count: pinnedDefs().length }, { key: "filled", name: "已填", count: filledDefs().length }, { key: "all", name: "全部", count: editableDefs().length }]; cats.forEach(function (cat) { chips.push({ key: "cat:" + cat, name: CATEGORY_NAMES[cat] || cat, count: defsForCategory(cat).length }); }); el.filters.innerHTML = chips.map(function (chip) { return '<button type="button" data-filter="' + escapeAttr(chip.key) + '" class="' + (state.filter === chip.key ? 'active' : '') + '">' + escapeHtml(chip.name) + ' ' + chip.count + '</button>'; }).join(""); el.clearSearch.classList.toggle("hidden", !state.query); }
+    function renderContent() { var defs = visibleDefs(); var title = scopeTitle(); var html = renderBackfillPanel(); html += '<div class="section-head"><h2>' + escapeHtml(title) + '</h2><span>' + escapeHtml(helperText()) + '</span></div>'; if (!defs.length) html += '<div class="empty">没有匹配字段。可以搜索字段，或切到“全部”。</div>'; else if (state.filter === "filled" && !state.query) html += renderDenseFilled(defs); else html += '<div class="metric-list">' + defs.map(renderMetric).join("") + '</div>'; el.content.innerHTML = html; el.scopeLabel.textContent = title + ' · 显示 ' + defs.length + ' 项'; fillBackfillControls(); }
+    function renderBackfillPanel() { var daily = editableDefs(); return '<section class="backfill ' + (state.backfillOpen ? 'open' : '') + '"><h2>稳定值补录</h2><div class="backfill-result">适合“这几个月一直没断，但中间没每天记”的药物、补剂或习惯。默认只补空白日期，不覆盖已有记录。</div><div class="backfill-grid"><select id="backfillMetric">' + daily.map(function (def) { return '<option value="' + escapeAttr(def.metric_key) + '">' + escapeHtml(cleanLabel(def)) + '</option>'; }).join("") + '</select><input id="backfillValue" placeholder="稳定值，例如 40 或 true"></div><div class="backfill-grid two"><input id="backfillStart" type="date"><input id="backfillEnd" type="date"></div><div id="backfillResult" class="backfill-result"></div><div class="backfill-actions"><button id="previewBackfill" type="button">查缺口</button><button id="runBackfill" class="primary" type="button">补空白天</button></div></section>'; }
+    function fillBackfillControls() { if (!state.backfillOpen) return; var metric = document.getElementById("backfillMetric"); var value = document.getElementById("backfillValue"); var start = document.getElementById("backfillStart"); var end = document.getElementById("backfillEnd"); var result = document.getElementById("backfillResult"); if (!metric) return; if (!state.backfill.metric) state.backfill.metric = findDef("atomoxetine_total_mg") ? "atomoxetine_total_mg" : (state.pinned[0] || ""); if (!state.backfill.end) state.backfill.end = state.date || shanghaiDate(0); if (!state.backfill.start) state.backfill.start = addDays(state.backfill.end, -119); metric.value = state.backfill.metric; value.value = state.backfill.value; start.value = state.backfill.start; end.value = state.backfill.end; result.innerHTML = state.backfillPreview ? backfillPreviewText(state.backfillPreview) : "先选字段并查缺口。我会找最近一次记录，建议从它后一天开始补。"; }
+    function renderDenseFilled(defs) { return '<div class="dense-list">' + defs.map(function (def) { var value = valueFor(def); var expanded = !!state.expanded[def.metric_key]; var pinned = state.pinned.indexOf(def.metric_key) !== -1; return '<article class="dense-row ' + (expanded ? 'expanded' : '') + '" data-metric="' + escapeAttr(def.metric_key) + '"><button class="star ' + (pinned ? 'on' : '') + '" type="button" data-pin="' + escapeAttr(def.metric_key) + '">★</button><div><div class="dense-label">' + escapeHtml(cleanLabel(def)) + '</div><div class="dense-sub">' + escapeHtml((CATEGORY_NAMES[def.category] || def.category || '其他') + (def.unit ? ' · ' + def.unit : '')) + '</div></div><div class="dense-value">' + escapeHtml(displayValue(value, def)) + '</div><button class="icon" type="button" data-info="' + escapeAttr(def.metric_key) + '">i</button>' + renderMetricDetail(def) + '</article>'; }).join("") + '</div>'; }
+    function renderMetric(def) { var value = valueFor(def); var dirty = Object.prototype.hasOwnProperty.call(state.dirty, def.metric_key); var expanded = !!state.expanded[def.metric_key]; var pinned = state.pinned.indexOf(def.metric_key) !== -1; return '<article class="metric ' + (dirty ? 'dirty ' : '') + (expanded ? 'expanded' : '') + '" data-metric="' + escapeAttr(def.metric_key) + '"><div class="metric-main"><div class="metric-title-row"><button class="star ' + (pinned ? 'on' : '') + '" type="button" data-pin="' + escapeAttr(def.metric_key) + '" aria-label="常用">★</button><div><div class="metric-name">' + escapeHtml(cleanLabel(def)) + '</div><div class="metric-desc">' + escapeHtml(shortDescription(def)) + '</div></div><button class="icon" type="button" data-info="' + escapeAttr(def.metric_key) + '" aria-label="字段说明">i</button></div><div class="metric-meta">' + metaPills(def).map(function (item) { return '<span class="pill">' + escapeHtml(item) + '</span>'; }).join("") + '</div></div><div class="metric-control">' + renderControl(def, value) + '</div>' + renderMetricDetail(def) + '</article>'; }
+    function renderControl(def, value) { if (def.value_type === "boolean") return renderBool(def, value); if (def.value_type === "text") return '<input class="metric-input" data-key="' + escapeAttr(def.metric_key) + '" value="' + escapeAttr(value == null ? "" : value) + '" placeholder="输入文本">'; if (def.value_type === "number") return renderNumber(def, value); return '<button type="button" data-json="' + escapeAttr(def.metric_key) + '">用文本备注</button>'; }
+    function renderNumber(def, value) { var step = stepFor(def); return '<div class="number-control"><button type="button" data-step="' + escapeAttr(def.metric_key) + '" data-delta="-' + step + '">−</button><input class="metric-input" data-key="' + escapeAttr(def.metric_key) + '" type="number" inputmode="decimal" step="' + step + '" value="' + escapeAttr(value == null ? "" : value) + '"><button type="button" data-step="' + escapeAttr(def.metric_key) + '" data-delta="' + step + '">+</button></div>'; }
+    function renderBool(def, value) { var current = value === true ? "true" : value === false ? "false" : ""; return '<div class="tri"><button type="button" data-bool="' + escapeAttr(def.metric_key) + '" data-value="" class="' + (current === "" ? "active" : "") + '">—</button><button type="button" data-bool="' + escapeAttr(def.metric_key) + '" data-value="false" class="' + (current === "false" ? "active" : "") + '">否</button><button type="button" data-bool="' + escapeAttr(def.metric_key) + '" data-value="true" class="' + (current === "true" ? "active" : "") + '">是</button></div>'; }
+    function renderMetricDetail(def) { var lines = []; lines.push('<div><strong>说明：</strong>' + escapeHtml(def.description || '数据库暂无说明') + '</div>'); lines.push('<div><strong>字段：</strong><code>' + escapeHtml(def.metric_key) + '</code></div>'); lines.push('<div><strong>格式：</strong>' + escapeHtml(def.value_type + (def.unit ? ' · ' + def.unit : '') + ' · ' + (CATEGORY_NAMES[def.category] || def.category || '其他')) + '</div>'); if (def.aliases && def.aliases.length) lines.push('<div><strong>别名：</strong>' + escapeHtml(def.aliases.join(' / ')) + '</div>'); if (def.source_headers && def.source_headers.length) lines.push('<div><strong>原表头：</strong>' + escapeHtml(def.source_headers.join(' / ')) + '</div>'); if (def.aggregation_method) lines.push('<div><strong>聚合：</strong>' + escapeHtml(def.aggregation_method) + '</div>'); var md = def.metadata || {}; if (md.note) lines.push('<div><strong>写入备注：</strong>' + escapeHtml(String(md.note)) + '</div>'); if (md.write_kind || md.write_action || md.source_column) lines.push('<div><strong>元数据：</strong>' + escapeHtml([md.write_kind, md.write_action, md.source_column && '列 ' + md.source_column].filter(Boolean).join(' · ')) + '</div>'); if (md.write_format) lines.push('<div><strong>写入样例：</strong><pre>' + escapeHtml(JSON.stringify(md.write_format, null, 2)) + '</pre></div>'); return '<div class="metric-detail"><div class="detail-grid">' + lines.join("") + '</div></div>'; }
+    function handleInput(event) { if (event.target && event.target.id === "backfillValue") { state.backfill.value = event.target.value; return; } var input = event.target.closest(".metric-input"); if (!input) return; var key = input.dataset.key; var def = findDef(key); if (!def) return; var value = input.value; if (value === "") setDirty(key, null); else if (def.value_type === "number") setDirty(key, Number(value)); else setDirty(key, value); }
+    function handleChange(event) { if (!event.target) return; if (event.target.id === "backfillMetric") { state.backfill.metric = event.target.value; state.backfillPreview = null; state.backfillTouchedStart = false; } if (event.target.id === "backfillValue") state.backfill.value = event.target.value; if (event.target.id === "backfillStart") { state.backfill.start = event.target.value; state.backfillTouchedStart = true; } if (event.target.id === "backfillEnd") state.backfill.end = event.target.value; }
+    function handleClick(event) { var pin = event.target.closest("[data-pin]"); if (pin) { togglePinned(pin.dataset.pin); return; } var info = event.target.closest("[data-info]"); if (info) { state.expanded[info.dataset.info] = !state.expanded[info.dataset.info]; renderAll(); return; } var step = event.target.closest("[data-step]"); if (step) { var key = step.dataset.step; var input = el.content.querySelector('input[data-key="' + cssEscape(key) + '"]'); var current = Number(input && input.value || 0); var next = roundNumber(current + Number(step.dataset.delta || 0)); if (input) input.value = String(next); setDirty(key, next); renderAll(); return; } var bool = event.target.closest("[data-bool]"); if (bool) { var raw = bool.dataset.value; var value = raw === "" ? null : raw === "true"; setDirty(bool.dataset.bool, value); renderAll(); return; } if (event.target.closest("#previewBackfill")) { previewBackfill(); return; } if (event.target.closest("#runBackfill")) { runBackfill(); return; } }
+    function setDirty(key, value) { state.dirty[key] = value; setStatus("未保存"); updateFooter(); }
+    function undoDirty() { state.dirty = {}; renderAll(); showToast("已撤销未保存改动"); }
+    async function saveDirty() { var keys = Object.keys(state.dirty); if (!keys.length) return showToast("没有改动"); var body = { local_date: state.date, metrics: state.dirty }; var snapshot = Object.assign({}, state.dirty); state.dirty = {}; renderAll(); try { await sendOrQueue("/api/metrics", "POST", body); Object.keys(snapshot).forEach(function (key) { state.values[key] = snapshot[key]; }); showToast("已保存 " + keys.length + " 项"); await loadDay(); } catch (err) { showToast("已排队"); } }
+    async function previewBackfill() { var metric = document.getElementById("backfillMetric").value; var start = document.getElementById("backfillStart").value; var end = document.getElementById("backfillEnd").value || state.date; state.backfill.metric = metric; state.backfill.start = start; state.backfill.end = end; state.backfill.value = document.getElementById("backfillValue").value; setStatus("查缺口"); var data = await api("/api/metric_gaps?metric_key=" + encodeURIComponent(metric) + "&start_date=" + encodeURIComponent(start) + "&end_date=" + encodeURIComponent(end)); state.backfillPreview = data; if (data.latest && !state.backfill.value) state.backfill.value = displayValue(data.latest.value, data.definition).replace(/ .*/, ""); if (data.latest && !state.backfillTouchedStart) { var suggested = addDays(data.latest.local_date, 1); if (suggested <= end) state.backfill.start = suggested; } renderAll(); setStatus("已预览"); }
+    async function runBackfill() { var metric = document.getElementById("backfillMetric").value; var value = document.getElementById("backfillValue").value; var start = document.getElementById("backfillStart").value; var end = document.getElementById("backfillEnd").value || state.date; state.backfill = { metric: metric, value: value, start: start, end: end }; if (!metric || !value || !start || !end) return showToast("补录信息不完整"); var body = { metric_key: metric, value: castBackfillValue(metric, value), start_date: start, end_date: end, only_empty: true }; var result = await sendOrQueue("/api/backfill", "POST", body); showToast(result.queued ? "补录已排队" : "已补 " + result.inserted + " 天"); state.backfillPreview = null; await loadDay(); }
+    function backfillPreviewText(data) { var latest = data.latest ? ('最近记录：' + data.latest.local_date + ' = ' + displayValue(data.latest.value, data.definition) + '<br>') : '最近没有找到记录<br>'; return latest + '范围：' + data.start_date + ' 到 ' + data.end_date + '<br>空白 ' + data.missing_count + ' 天，已有 ' + data.existing_count + ' 天。执行时只补空白，不覆盖已有记录。'; }
+    function toggleBackfill() { state.backfillOpen = !state.backfillOpen; renderAll(); }
+    function focusFirstMissing() { state.filter = "unfilled"; localStorage.setItem("metricsPwaFilter", state.filter); renderAll(); setTimeout(function () { var first = document.querySelector('.metric input, .metric button[data-bool]'); if (first) first.focus(); }, 30); }
+    function updateFooter() { var dirtyCount = Object.keys(state.dirty).length; el.pending.textContent = state.queue.length ? "待同步 " + state.queue.length : "无待同步"; el.saveBtn.textContent = dirtyCount ? "保存 " + dirtyCount : "保存"; el.undoBtn.classList.toggle("hidden", !dirtyCount); el.dirtyLabel.textContent = dirtyCount ? "已改 " + dirtyCount + " 项" : "未修改"; }
+    function visibleDefs() { var defs = editableDefs(); var q = state.query.toLowerCase(); if (q) return defs.filter(function (def) { return searchText(def).indexOf(q) !== -1; }); if (state.filter === "unfilled") return unfilledDefs(); if (state.filter === "pinned") return sortUnfilledFirst(pinnedDefs()); if (state.filter === "filled") return filledDefs(); if (state.filter.indexOf("cat:") === 0) return sortUnfilledFirst(defsForCategory(state.filter.slice(4))); return sortUnfilledFirst(defs); }
+    function editableDefs() { return state.defs.filter(function (d) { return d.category !== "strength_event" && d.category !== "medicine_event"; }); }
+    function pinnedDefs() { var byKey = {}; editableDefs().forEach(function (def) { byKey[def.metric_key] = def; }); return state.pinned.map(function (key) { return byKey[key]; }).filter(Boolean); }
+    function unfilledDefs() { return pinnedDefs().filter(function (def) { return !hasValueFor(def); }); }
+    function filledDefs() { return editableDefs().filter(hasValueFor); }
+    function defsForCategory(cat) { return editableDefs().filter(function (d) { return (d.category || "general") === cat; }); }
+    function categories() { var cats = unique(editableDefs().map(function (d) { return d.category || "general"; })); cats.sort(function (a, b) { return orderIndex(a) - orderIndex(b); }); return cats; }
+    function scopeTitle() { if (state.query) return '搜索“' + state.query + '”'; if (state.filter === "unfilled") return "待填常用"; if (state.filter === "pinned") return "常用字段"; if (state.filter === "filled") return "已填写字段"; if (state.filter.indexOf("cat:") === 0) return CATEGORY_NAMES[state.filter.slice(4)] || state.filter.slice(4); return "全部字段"; }
+    function helperText() { if (state.filter === "filled" && !state.query) return "紧凑查看已填"; if (state.filter === "unfilled") return "只显示常用未填"; return state.query ? "搜索覆盖全部字段" : "未填会排在前面"; }
+    function togglePinned(key) { var index = state.pinned.indexOf(key); if (index === -1) state.pinned.unshift(key); else state.pinned.splice(index, 1); savePinned(); renderAll(); }
+    function sortUnfilledFirst(defs) { return defs.slice().sort(function (a, b) { return Number(hasValueFor(a)) - Number(hasValueFor(b)); }); }
+    function hasValueFor(def) { var value = valueFor(def); return !(value === null || value === undefined || value === ""); }
+    function valueFor(def) { return Object.prototype.hasOwnProperty.call(state.dirty, def.metric_key) ? state.dirty[def.metric_key] : state.values[def.metric_key]; }
+    function findDef(key) { return state.defs.find(function (d) { return d.metric_key === key; }); }
+    function orderIndex(cat) { var index = CATEGORY_ORDER.indexOf(cat); return index === -1 ? 999 : index; }
+    function unique(list) { return Array.from(new Set(list)); }
+    function cleanLabel(def) { return String(def.label || def.metric_key).replace(/\n+/g, " ").replace(/\s+/g, " ").trim(); }
+    function shortDescription(def) { var text = def.description || (def.aliases && def.aliases.length ? "别名：" + def.aliases.join(" / ") : "点 i 查看字段格式"); return text.length > 86 ? text.slice(0, 84) + "…" : text; }
+    function metaPills(def) { var out = []; out.push(def.value_type || "value"); if (def.unit) out.push(def.unit); out.push(CATEGORY_NAMES[def.category] || def.category || "其他"); if (def.metadata && def.metadata.source_column) out.push("列 " + def.metadata.source_column); return out; }
+    function searchText(def) { return [def.metric_key, def.label, def.description, def.unit, def.category, (def.aliases || []).join(" "), (def.source_headers || []).join(" ")].join(" ").toLowerCase(); }
+    function displayValue(value, def) { if (value === true) return "是"; if (value === false) return "否"; if (value === null || value === undefined || value === "") return "空"; if (typeof value === "object") return JSON.stringify(value); return String(value) + (def && def.unit ? " " + def.unit : ""); }
+    function castBackfillValue(metricKey, raw) { var def = findDef(metricKey); if (!def) return raw; if (def.value_type === "number") return Number(raw); if (def.value_type === "boolean") return /^(true|yes|1|是)$/i.test(String(raw)); return raw; }
+    function stepFor(def) { var key = def.metric_key; if (key.indexOf("weight") !== -1 || key.indexOf("glucose") !== -1) return 0.1; if (key.indexOf("hours") !== -1) return 0.5; if (key.indexOf("_g") !== -1) return 50; if (def.unit === "scoop") return 0.25; return 1; }
+    function roundNumber(value) { return Math.round(value * 100) / 100; }
+    function escapeHtml(value) { return String(value == null ? "" : value).replace(/[&<>"']/g, function (char) { return ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[char]; }); }
+    function escapeAttr(value) { return escapeHtml(value); }
+    function cssEscape(value) { if (window.CSS && CSS.escape) return CSS.escape(value); return String(value).replace(/[^a-zA-Z0-9_-]/g, "\\$&"); }
     boot();
   })();
   </script>
