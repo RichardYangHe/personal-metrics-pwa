@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#f7f7f2">
+  <meta name="theme-color" content="#f6f7f8">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="每日数据">
@@ -13,13 +13,13 @@
   <style>
     :root {
       color-scheme: light;
-      --bg: #f7f7f2;
+      --bg: #f6f7f8;
       --panel: #ffffff;
       --ink: #181916;
-      --muted: #6a6f63;
-      --line: #dfe2d6;
-      --accent: #176b5c;
-      --accent-2: #244b8f;
+      --muted: #65707a;
+      --line: #d9dee3;
+      --accent: #0f766e;
+      --accent-2: #2563eb;
       --danger: #a43d32;
       --warn: #996b18;
       --tap: 48px;
@@ -41,8 +41,10 @@
     .login h1 { margin: 0; font-size: 28px; }
     .login form { display: grid; gap: 12px; }
     .app { min-height: 100vh; display: grid; grid-template-rows: auto 1fr auto; }
-    .topbar { position: sticky; top: 0; z-index: 10; display: grid; grid-template-columns: auto 1fr auto; gap: 8px; align-items: center; padding: 10px 10px 8px; background: rgba(247,247,242,.94); border-bottom: 1px solid var(--line); backdrop-filter: blur(14px); }
-    .datebar { display: grid; grid-template-columns: 48px 1fr 48px; gap: 6px; }
+    .topbar { position: sticky; top: 0; z-index: 10; display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 8px; align-items: center; padding: 10px 10px 8px; background: rgba(246,247,248,.94); border-bottom: 1px solid var(--line); backdrop-filter: blur(14px); }
+    #todayBtn { min-width: 62px; white-space: nowrap; }
+    .datebar { display: grid; grid-template-columns: 44px minmax(0, 1fr) 44px; gap: 6px; min-width: 0; }
+    .datebar button { padding: 0; }
     .datebar input { text-align: center; font-weight: 650; }
     .status { font-size: 12px; color: var(--muted); text-align: right; white-space: nowrap; }
     .tabs { display: flex; gap: 8px; overflow-x: auto; padding: 10px; border-bottom: 1px solid var(--line); background: var(--bg); scrollbar-width: none; }
@@ -53,29 +55,31 @@
     .section-title { display: flex; align-items: center; justify-content: space-between; margin: 8px 2px 10px; }
     .section-title h2 { margin: 0; font-size: 18px; }
     .grid { display: grid; gap: 8px; }
-    .metric { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: center; min-height: 60px; padding: 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--panel); }
+    .metric { display: grid; grid-template-columns: 1fr; gap: 10px; align-items: stretch; min-height: 60px; padding: 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--panel); }
     .metric.dirty { border-color: #b89138; box-shadow: inset 3px 0 0 #b89138; }
     .metric-label { min-width: 0; }
-    .metric-name { font-size: 15px; font-weight: 650; line-height: 1.25; white-space: pre-line; overflow-wrap: anywhere; }
+    .metric-name { font-size: 15px; font-weight: 650; line-height: 1.35; white-space: normal; overflow-wrap: break-word; }
     .metric-meta { font-size: 12px; color: var(--muted); margin-top: 3px; }
-    .number-control { display: grid; grid-template-columns: 42px minmax(78px, 104px) 42px; gap: 5px; align-items: center; }
+    .number-control { display: grid; grid-template-columns: 48px minmax(0, 1fr) 48px; gap: 6px; align-items: center; width: 100%; }
     .number-control input { text-align: center; padding-left: 4px; padding-right: 4px; }
-    .tri { display: grid; grid-template-columns: 42px 42px 42px; gap: 5px; }
-    .text-control { width: min(48vw, 190px); }
-    .quick { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-bottom: 12px; }
+    .tri { display: grid; grid-template-columns: repeat(3, minmax(48px, 1fr)); gap: 6px; width: 100%; }
+    .text-control { width: 100%; }
+    .quick { display: grid; grid-template-columns: 1fr; gap: 8px; margin-bottom: 12px; }
     .event-panel { display: grid; gap: 10px; padding: 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--panel); margin-bottom: 10px; }
     .event-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
     .event-row.three { grid-template-columns: 1fr 1fr 1fr; }
     .events-list { display: grid; gap: 8px; }
     .event-item { padding: 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--panel); font-size: 14px; }
-    .bottom { position: fixed; left: 0; right: 0; bottom: 0; display: grid; grid-template-columns: 1fr auto auto; gap: 8px; align-items: center; padding: 10px calc(10px + env(safe-area-inset-right)) calc(10px + env(safe-area-inset-bottom)) calc(10px + env(safe-area-inset-left)); background: rgba(247,247,242,.96); border-top: 1px solid var(--line); backdrop-filter: blur(14px); }
+    .bottom { position: fixed; left: 0; right: 0; bottom: 0; display: grid; grid-template-columns: 1fr auto auto; gap: 8px; align-items: center; padding: 10px calc(10px + env(safe-area-inset-right)) calc(10px + env(safe-area-inset-bottom)) calc(10px + env(safe-area-inset-left)); background: rgba(246,247,248,.96); border-top: 1px solid var(--line); backdrop-filter: blur(14px); }
     .pending { color: var(--warn); font-size: 13px; }
     .toast { position: fixed; left: 12px; right: 12px; bottom: calc(76px + env(safe-area-inset-bottom)); padding: 12px; border-radius: 8px; background: #20231f; color: #fff; z-index: 30; text-align: center; transform: translateY(150%); transition: transform .2s ease; }
     .toast.show { transform: translateY(0); }
     @media (min-width: 720px) {
       .content { max-width: 980px; margin: 0 auto; width: 100%; }
       .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-      .quick { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+      .quick { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .metric { grid-template-columns: minmax(0, 1fr) minmax(190px, auto); align-items: center; }
+      .number-control { min-width: 190px; }
       .metric { min-height: 72px; }
     }
   </style>
