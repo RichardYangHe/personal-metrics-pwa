@@ -1,6 +1,6 @@
 {
-  "name": "????",
-  "short_name": "????",
+  "name": "每日数据",
+  "short_name": "每日数据",
   "start_url": "/personal-metrics-pwa/",
   "scope": "/personal-metrics-pwa/",
   "display": "standalone",
