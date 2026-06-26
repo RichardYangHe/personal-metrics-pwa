@@ -60,7 +60,7 @@
     .filters { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; }
     .filters button { min-height: 34px; flex: 0 0 auto; padding: 0 10px; border-radius: 999px; font-size: 13px; }
     .summary { display: flex; justify-content: space-between; gap: 10px; padding: 4px 2px 0; color: var(--muted); font-size: 12px; }
-    .content { padding: 8px 10px 92px; max-width: 980px; margin: 0 auto; }
+    .content { padding: 8px 10px calc(116px + env(safe-area-inset-bottom)); max-width: 980px; margin: 0 auto; }
     .section-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; padding: 6px 2px; }
     .section-head h2 { margin: 0; font-size: 17px; }
     .section-head span { color: var(--muted); font-size: 12px; }
@@ -130,7 +130,7 @@
     .history-row .value { font-weight: 750; overflow-wrap: anywhere; }
     .history-row .source { color: var(--muted); font-size: 11px; text-align: right; }
     .bottom { position: fixed; left: 0; right: 0; bottom: 0; z-index: 25; display: grid; grid-template-columns: 1fr auto auto auto; gap: 8px; align-items: center; padding: 10px calc(10px + env(safe-area-inset-right)) calc(10px + env(safe-area-inset-bottom)) calc(10px + env(safe-area-inset-left)); background: rgba(244,246,248,.97); border-top: 1px solid var(--line); backdrop-filter: blur(14px); }
-    .pending { color: var(--warn); font-size: 13px; }
+    .pending { color: var(--warn); font-size: 13px; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .toast { position: fixed; left: 12px; right: 12px; bottom: calc(76px + env(safe-area-inset-bottom)); padding: 12px; border-radius: 8px; background: #20231f; color: #fff; z-index: 30; text-align: center; opacity: 0; transform: translateY(calc(100% + 90px)); transition: transform .2s ease, opacity .2s ease; pointer-events: none; }
     .toast.show { opacity: 1; transform: translateY(0); }
     @media (min-width: 760px) { .tools, .content { padding-left: 14px; padding-right: 14px; } .today-panel { grid-template-columns: minmax(0, 1fr) 320px; align-items: center; } .quick-actions { grid-template-columns: repeat(3, 1fr); } .metric { grid-template-columns: minmax(0, 1fr) minmax(230px, 300px); align-items: center; } .metric-detail { grid-column: 1 / -1; } .metric-list { grid-template-columns: repeat(2, minmax(0, 1fr)); } .metric-list .metric { grid-template-columns: 1fr; } .backfill-grid { grid-template-columns: 1fr 1fr; } }
