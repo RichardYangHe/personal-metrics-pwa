@@ -1,7 +1,27 @@
-const CACHE = "metrics-pwa-pages-v11";
+const CACHE = "metrics-pwa-pages-v12";
 const BASE = "/personal-metrics-pwa";
 const API_BASE = "https://mumcofuervklloaotpih.supabase.co/functions/v1/metrics-pwa";
 const ASSETS = [BASE + "/", BASE + "/index.html", BASE + "/manifest.webmanifest", BASE + "/icon.svg", BASE + "/apple-touch-icon.png", BASE + "/icon-192.png", BASE + "/icon-512.png"];
-self.addEventListener("install", function (event) { event.waitUntil(caches.open(CACHE).then(function (cache) { return cache.addAll(ASSETS); }).then(function () { return self.skipWaiting(); })); });
-self.addEventListener("activate", function (event) { event.waitUntil(caches.keys().then(function (keys) { return Promise.all(keys.filter(function (key) { return key !== CACHE; }).map(function (key) { return caches.delete(key); })); }).then(function () { return self.clients.claim(); })); });
-self.addEventListener("fetch", function (event) { var url = new URL(event.request.url); if (event.request.method !== "GET") return; if (url.href.indexOf(API_BASE + "/api/") === 0) return; if (url.pathname.indexOf(BASE) !== 0) return; event.respondWith(caches.match(event.request, { ignoreSearch: true }).then(function (cached) { var refresh = fetch(event.request).then(function (response) { if (response && response.ok) caches.open(CACHE).then(function (cache) { cache.put(event.request, response.clone()); }); return response; }); if (cached) { event.waitUntil(refresh.catch(function () {})); return cached; } return refresh.catch(function () { return caches.match(BASE + "/", { ignoreSearch: true }); }); })); });
+
+self.addEventListener("install", (event) => {
+  event.waitUntil(caches.open(CACHE).then((cache) => cache.addAll(ASSETS)).then(() => self.skipWaiting()));
+});
+
+self.addEventListener("activate", (event) => {
+  event.waitUntil(caches.keys().then((keys) => Promise.all(keys.filter((key) => key !== CACHE).map((key) => caches.delete(key)))).then(() => self.clients.claim()));
+});
+
+self.addEventListener("fetch", (event) => {
+  const url = new URL(event.request.url);
+  if (url.href.startsWith(API_BASE)) {
+    event.respondWith(fetch(event.request).catch(() => caches.match(event.request)));
+    return;
+  }
+  if (url.origin === location.origin && url.pathname.startsWith(BASE)) {
+    event.respondWith(caches.match(event.request).then((cached) => cached || fetch(event.request).then((response) => {
+      const copy = response.clone();
+      caches.open(CACHE).then((cache) => cache.put(event.request, copy));
+      return response;
+    }).catch(() => caches.match(BASE + "/index.html"))));
+  }
+});
