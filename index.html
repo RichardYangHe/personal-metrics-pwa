@@ -156,8 +156,10 @@
     function showToast(text) { el.toast.textContent = text; el.toast.classList.add("show"); setTimeout(function () { el.toast.classList.remove("show"); }, 1800); }
     function setStatus(text) { el.status.textContent = text; }
     function loadQueue() { try { return JSON.parse(localStorage.getItem("metricsPwaQueue") || "[]"); } catch (_) { return []; } }
-    function loadPinned() { try { var saved = JSON.parse(localStorage.getItem("metricsPwaPinnedKeys") || "null"); if (Array.isArray(saved) && saved.length) return saved; } catch (_) {} return DEFAULT_PINNED.slice(); }
-    function savePinned() { localStorage.setItem("metricsPwaPinnedKeys", JSON.stringify(state.pinned)); }
+    function cleanPinnedKeys(keys) { var out = []; if (!Array.isArray(keys)) return out; keys.forEach(function (item) { var key = String(item || "").trim(); if (/^[a-z][a-z0-9_]*$/.test(key) && out.indexOf(key) === -1) out.push(key); }); return out; }
+    function localPinnedValue() { try { var saved = JSON.parse(localStorage.getItem("metricsPwaPinnedKeys") || "null"); return Array.isArray(saved) ? cleanPinnedKeys(saved) : null; } catch (_) { return null; } }
+    function loadPinned() { var saved = localPinnedValue(); return Array.isArray(saved) ? saved : DEFAULT_PINNED.slice(); }
+    function savePinned() { localStorage.setItem("metricsPwaPinnedKeys", JSON.stringify(cleanPinnedKeys(state.pinned))); }
     function saveQueue() { localStorage.setItem("metricsPwaQueue", JSON.stringify(state.queue)); updateFooter(); }
     function enqueue(item) { state.queue.push(item); saveQueue(); showToast("已加入待同步"); }
     function cacheKeyForDay(date) { return "metricsPwaDay:" + date; }
@@ -168,9 +170,13 @@
     async function api(path, options) { var opts = options || {}; opts.credentials = "same-origin"; opts.headers = Object.assign({ "content-type": "application/json" }, opts.headers || {}); if (state.token) opts.headers.Authorization = "Bearer " + state.token; var res = await fetch(BASE + path, opts); var data = await res.json().catch(function () { return {}; }); if (res.status === 401) { state.authed = false; state.token = ""; localStorage.removeItem("metricsPwaToken"); showLogin(); throw new Error("Unauthorized"); } if (!res.ok || data.ok === false) throw new Error(data.error || "请求失败"); return data; }
     async function sendOrQueue(path, method, body) { var item = { id: uid(), path: path, method: method, body: body, created_at: new Date().toISOString() }; if (!navigator.onLine) { enqueue(item); return { queued: true }; } try { return await api(path, { method: method, body: JSON.stringify(body) }); } catch (err) { if (String(err.message) !== "Unauthorized") enqueue(item); throw err; } }
     async function flushQueue() { if (!state.queue.length || !navigator.onLine) { saveQueue(); return; } var next = []; for (var i = 0; i < state.queue.length; i += 1) { var item = state.queue[i]; try { await api(item.path, { method: item.method, body: JSON.stringify(item.body) }); } catch (err) { next = state.queue.slice(i); break; } } state.queue = next; saveQueue(); if (!state.queue.length) { showToast("同步完成"); await loadDay(); } }
+    async function loadPreferences() { if (localStorage.getItem("metricsPwaPinnedPending") === "1") { await savePreferences(); return; } var localPinned = localPinnedValue(); var localNeedsMigration = Array.isArray(localPinned) && localStorage.getItem("metricsPwaPinnedSynced") !== "1"; try { setStatus("读取收藏"); var data = await api("/api/preferences"); var prefs = data.preferences || {}; if (localNeedsMigration) { state.pinned = localPinned; savePinned(); await savePreferences(); setStatus("本地收藏已迁移"); return; } if (data.exists && Array.isArray(prefs.pinned_metric_keys)) { state.pinned = cleanPinnedKeys(prefs.pinned_metric_keys); savePinned(); localStorage.setItem("metricsPwaPinnedSynced", "1"); renderAll(); setStatus("收藏已同步"); return; } state.pinned = loadPinned(); savePinned(); await savePreferences(); setStatus("收藏已迁移"); } catch (err) { setStatus("本地收藏"); } }
+    async function savePreferences() { savePinned(); if (!navigator.onLine) { localStorage.setItem("metricsPwaPinnedPending", "1"); setStatus("收藏待同步"); return; } try { await api("/api/preferences", { method: "POST", body: JSON.stringify({ pinned_metric_keys: cleanPinnedKeys(state.pinned) }) }); localStorage.removeItem("metricsPwaPinnedPending"); localStorage.setItem("metricsPwaPinnedSynced", "1"); setStatus("收藏已同步"); } catch (err) { if (String(err.message) !== "Unauthorized") { localStorage.setItem("metricsPwaPinnedPending", "1"); setStatus("收藏待同步"); } } }
+    async function syncAll() { await flushQueue(); await syncPendingPreferences(); }
+    async function syncPendingPreferences() { if (localStorage.getItem("metricsPwaPinnedPending") === "1") await savePreferences(); }
     function showLogin() { el.login.classList.remove("hidden"); el.app.classList.add("hidden"); setTimeout(function () { el.passphrase.focus(); }, 50); }
     function showApp() { el.login.classList.add("hidden"); el.app.classList.remove("hidden"); }
-    async function boot() { registerSW(); saveQueue(); el.dateInput.value = state.date; bindEvents(); if (state.token) { showApp(); hydrateFromCache(); } else { showLogin(); } try { if (state.token) await api("/api/session"); state.authed = true; showApp(); await loadSchema(); await loadDay(); await flushQueue(); } catch (_) { if (!state.defs.length) showLogin(); } }
+    async function boot() { registerSW(); saveQueue(); el.dateInput.value = state.date; bindEvents(); if (state.token) { showApp(); hydrateFromCache(); } else { showLogin(); } try { if (state.token) await api("/api/session"); state.authed = true; showApp(); await loadSchema(); await loadPreferences(); await loadDay(); await syncAll(); } catch (_) { if (!state.defs.length) showLogin(); } }
     function registerSW() { if ("serviceWorker" in navigator) { navigator.serviceWorker.register("/personal-metrics-pwa/sw.js", { scope: "/personal-metrics-pwa/" }).catch(function () {}); } }
     function bindEvents() {
       el.loginForm.addEventListener("submit", async function (event) {
@@ -184,6 +190,7 @@
           state.authed = true;
           showApp();
           await loadSchema();
+          await loadPreferences();
           await loadDay();
           el.loginMsg.textContent = "";
         } catch (err) {
@@ -197,12 +204,12 @@
       el.searchInput.addEventListener("input", function () { state.query = el.searchInput.value.trim(); renderAll(); });
       el.clearSearch.addEventListener("click", function () { el.searchInput.value = ""; state.query = ""; renderAll(); });
       el.saveBtn.addEventListener("click", saveDirty);
-      document.getElementById("syncBtn").addEventListener("click", flushQueue);
+      document.getElementById("syncBtn").addEventListener("click", syncAll);
       el.undoBtn.addEventListener("click", undoDirty);
       el.useLatestBtn.addEventListener("click", useLatestForPinned);
       el.firstMissingBtn.addEventListener("click", focusFirstMissing);
       el.backfillToggle.addEventListener("click", toggleBackfill);
-      window.addEventListener("online", flushQueue);
+      window.addEventListener("online", syncAll);
       el.modeTabs.addEventListener("click", handleFilterClick);
       el.filters.addEventListener("click", handleFilterClick);
       el.content.addEventListener("input", handleInput);
@@ -260,7 +267,7 @@
     function categories() { var cats = unique(editableDefs().map(function (d) { return d.category || "general"; })); cats.sort(function (a, b) { return orderIndex(a) - orderIndex(b); }); return cats; }
     function scopeTitle() { if (state.query) return '搜索“' + state.query + '”'; if (state.filter === "unfilled") return "待填常用"; if (state.filter === "pinned") return "常用字段"; if (state.filter === "filled") return "已填写字段"; if (state.filter.indexOf("cat:") === 0) return CATEGORY_NAMES[state.filter.slice(4)] || state.filter.slice(4); return "全部字段"; }
     function helperText() { if (state.filter === "filled" && !state.query) return "紧凑查看已填"; if (state.filter === "unfilled") return "只显示常用未填"; return state.query ? "搜索覆盖全部字段" : "未填会排在前面"; }
-    function togglePinned(key) { var index = state.pinned.indexOf(key); if (index === -1) state.pinned.unshift(key); else state.pinned.splice(index, 1); savePinned(); renderAll(); }
+    function togglePinned(key) { var index = state.pinned.indexOf(key); if (index === -1) state.pinned.unshift(key); else state.pinned.splice(index, 1); state.pinned = cleanPinnedKeys(state.pinned); savePinned(); renderAll(); savePreferences(); }
     function sortUnfilledFirst(defs) { return defs.slice().sort(function (a, b) { return Number(hasValueFor(a)) - Number(hasValueFor(b)); }); }
     function hasValueFor(def) { var value = valueFor(def); return !(value === null || value === undefined || value === ""); }
     function valueFor(def) { return Object.prototype.hasOwnProperty.call(state.dirty, def.metric_key) ? state.dirty[def.metric_key] : state.values[def.metric_key]; }
