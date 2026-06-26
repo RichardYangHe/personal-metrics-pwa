@@ -38,31 +38,31 @@
     .datebar input { text-align: center; font-weight: 700; }
     .status { font-size: 12px; color: var(--muted); text-align: right; white-space: nowrap; }
     .tools { padding: 10px; background: var(--bg); border-bottom: 1px solid var(--line); }
-    .today-panel { display: grid; gap: 8px; padding: 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--panel); }
+    .today-panel { display: grid; gap: 6px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--panel); }
     .today-top { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; align-items: center; }
-    .today-title { font-size: 18px; font-weight: 800; }
+    .today-title { font-size: 17px; font-weight: 800; }
     .today-sub { color: var(--muted); font-size: 12px; line-height: 1.35; }
     .progress-track { height: 8px; border-radius: 999px; background: var(--soft); overflow: hidden; }
     .progress-fill { height: 100%; width: 0; background: var(--accent); border-radius: inherit; transition: width .18s ease; }
-    .stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+    .stats { display: none; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
     .stat { border: 1px solid var(--line); border-radius: 8px; padding: 7px 8px; background: #f8fafc; min-width: 0; }
     .stat b { display: block; font-size: 16px; line-height: 1.1; }
     .stat span { display: block; color: var(--muted); font-size: 11px; margin-top: 2px; white-space: nowrap; }
-    .mode-tabs { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; margin-top: 8px; }
-    .mode-tabs button { min-height: 38px; padding: 0 6px; font-size: 14px; }
-    .quick-actions { display: grid; grid-template-columns: 1.2fr 1fr 1fr; gap: 6px; padding-top: 8px; }
-    .quick-actions button { min-height: 40px; padding: 0 8px; font-size: 14px; }
-    .advanced-tools { margin-top: 8px; border: 1px solid var(--line); border-radius: 8px; background: rgba(255,255,255,.78); overflow: hidden; }
-    .advanced-tools summary { list-style: none; cursor: pointer; min-height: 38px; display: flex; align-items: center; justify-content: space-between; padding: 0 10px; color: var(--muted); font-size: 13px; }
+    .mode-tabs { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; margin-top: 7px; }
+    .mode-tabs button { min-height: 36px; padding: 0 6px; font-size: 14px; }
+    .quick-actions { display: grid; grid-template-columns: 1.2fr 1fr 1fr; gap: 6px; padding-top: 7px; }
+    .quick-actions button { min-height: 38px; padding: 0 8px; font-size: 14px; }
+    .advanced-tools { margin-top: 5px; border: 0; border-radius: 8px; background: transparent; overflow: hidden; }
+    .advanced-tools summary { list-style: none; cursor: pointer; min-height: 26px; display: flex; align-items: center; justify-content: space-between; padding: 0 2px; color: var(--muted); font-size: 12px; }
     .advanced-tools summary::-webkit-details-marker { display: none; }
     .advanced-body { display: grid; gap: 8px; padding: 0 8px 8px; }
     .search-row { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: center; }
     .filters { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; }
     .filters button { min-height: 34px; flex: 0 0 auto; padding: 0 10px; border-radius: 999px; font-size: 13px; }
-    .summary { display: flex; justify-content: space-between; gap: 10px; padding: 8px 2px 0; color: var(--muted); font-size: 12px; }
+    .summary { display: flex; justify-content: space-between; gap: 10px; padding: 4px 2px 0; color: var(--muted); font-size: 12px; }
     .content { padding: 8px 10px 92px; max-width: 980px; margin: 0 auto; }
-    .section-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; padding: 8px 2px; }
-    .section-head h2 { margin: 0; font-size: 18px; }
+    .section-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; padding: 6px 2px; }
+    .section-head h2 { margin: 0; font-size: 17px; }
     .section-head span { color: var(--muted); font-size: 12px; }
     .metric-list { display: grid; gap: 8px; }
     .metric { display: grid; gap: 8px; padding: 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--panel); }
@@ -104,6 +104,9 @@
     .backfill-result { color: var(--muted); font-size: 13px; line-height: 1.45; }
     .backfill-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
     .empty { border: 1px dashed var(--line); border-radius: 8px; padding: 18px; color: var(--muted); background: rgba(255,255,255,.72); }
+    .done-card { display: grid; gap: 8px; border: 1px solid #a7d8d0; border-radius: 8px; padding: 14px; background: #ecfdf8; color: #0f3f3a; }
+    .done-card b { font-size: 18px; }
+    .done-card span { color: #35615c; font-size: 13px; line-height: 1.45; }
     .bottom { position: fixed; left: 0; right: 0; bottom: 0; z-index: 25; display: grid; grid-template-columns: 1fr auto auto auto; gap: 8px; align-items: center; padding: 10px calc(10px + env(safe-area-inset-right)) calc(10px + env(safe-area-inset-bottom)) calc(10px + env(safe-area-inset-left)); background: rgba(244,246,248,.97); border-top: 1px solid var(--line); backdrop-filter: blur(14px); }
     .pending { color: var(--warn); font-size: 13px; }
     .toast { position: fixed; left: 12px; right: 12px; bottom: calc(76px + env(safe-area-inset-bottom)); padding: 12px; border-radius: 8px; background: #20231f; color: #fff; z-index: 30; text-align: center; opacity: 0; transform: translateY(calc(100% + 90px)); transition: transform .2s ease, opacity .2s ease; pointer-events: none; }
@@ -189,7 +192,7 @@
     function renderAll() { renderTodayPanel(); renderFilters(); renderContent(); updateFooter(); }
     function renderTodayPanel() { var pinned = pinnedDefs(); var filled = pinned.filter(hasValueFor).length; var total = pinned.length || 1; var missing = Math.max(total - filled, 0); var dirtyCount = Object.keys(state.dirty).length; var pct = Math.round(filled / total * 100); var latestUsable = pinned.filter(function (def) { return !hasValueFor(def) && latestFor(def); }).length; el.todayPanel.innerHTML = '<div class="today-top"><div><div class="today-title">今天还差 ' + missing + ' 项</div><div class="today-sub">' + escapeHtml(state.date) + ' · 常用 ' + filled + '/' + total + ' · ' + (latestUsable ? latestUsable + ' 项可沿用上次值' : '没有可直接沿用的常用项') + '</div></div><div class="stat"><b>' + pct + '%</b><span>完成</span></div></div><div class="progress-track"><div class="progress-fill" style="width:' + pct + '%"></div></div><div class="stats"><div class="stat"><b>' + filled + '</b><span>常用已填</span></div><div class="stat"><b>' + missing + '</b><span>常用待填</span></div><div class="stat"><b>' + dirtyCount + '</b><span>未保存</span></div></div>'; el.useLatestBtn.disabled = latestUsable === 0; }
     function renderFilters() { var modes = [{ key: "unfilled", name: "待填", count: unfilledDefs().length }, { key: "pinned", name: "常用", count: pinnedDefs().length }, { key: "filled", name: "已填", count: filledDefs().length }, { key: "all", name: "全部", count: editableDefs().length }]; el.modeTabs.innerHTML = modes.map(function (chip) { return '<button type="button" data-filter="' + escapeAttr(chip.key) + '" class="' + (state.filter === chip.key ? 'active' : '') + '">' + escapeHtml(chip.name) + ' ' + chip.count + '</button>'; }).join(""); var cats = categories(); el.filters.innerHTML = cats.map(function (cat) { var key = "cat:" + cat; return '<button type="button" data-filter="' + escapeAttr(key) + '" class="' + (state.filter === key ? 'active' : '') + '">' + escapeHtml(CATEGORY_NAMES[cat] || cat) + ' ' + defsForCategory(cat).length + '</button>'; }).join(""); el.clearSearch.classList.toggle("hidden", !state.query); }
-    function renderContent() { var defs = visibleDefs(); var title = scopeTitle(); var html = renderBackfillPanel(); html += '<div class="section-head"><h2>' + escapeHtml(title) + '</h2><span>' + escapeHtml(helperText()) + '</span></div>'; if (!defs.length) html += '<div class="empty">没有匹配字段。可以搜索字段，或切到“全部”。</div>'; else if (state.filter === "filled" && !state.query) html += renderDenseFilled(defs); else html += '<div class="metric-list">' + defs.map(renderMetric).join("") + '</div>'; el.content.innerHTML = html; el.scopeLabel.textContent = title + ' · 显示 ' + defs.length + ' 项'; fillBackfillControls(); }
+    function renderContent() { var defs = visibleDefs(); var title = scopeTitle(); var dirtyCount = Object.keys(state.dirty).length; var html = renderBackfillPanel(); html += '<div class="section-head"><h2>' + escapeHtml(title) + '</h2><span>' + escapeHtml(helperText()) + '</span></div>'; if (!defs.length && dirtyCount && state.filter === "unfilled" && !state.query) html += '<div class="done-card"><b>待填常用已放进待保存清单</b><span>底部显示“保存 ' + dirtyCount + '”。你还可以切到“常用”逐项检查，或直接保存。</span></div>'; else if (!defs.length) html += '<div class="empty">没有匹配字段。可以搜索字段，或切到“全部”。</div>'; else if (state.filter === "filled" && !state.query) html += renderDenseFilled(defs); else html += '<div class="metric-list">' + defs.map(renderMetric).join("") + '</div>'; el.content.innerHTML = html; el.scopeLabel.textContent = title + ' · 显示 ' + defs.length + ' 项'; fillBackfillControls(); }
     function renderBackfillPanel() { var daily = sortPinnedFirst(editableDefs()); return '<section class="backfill ' + (state.backfillOpen ? 'open' : '') + '"><h2>稳定值补录</h2><div class="backfill-result">适合药物、补剂、习惯这类“连续很多天一样，但中间漏记”的字段。先查缺口，再只补空白天，不覆盖已有记录。</div><div class="backfill-grid"><select id="backfillMetric">' + daily.map(function (def) { return '<option value="' + escapeAttr(def.metric_key) + '">' + escapeHtml((state.pinned.indexOf(def.metric_key) !== -1 ? "★ " : "") + cleanLabel(def)) + '</option>'; }).join("") + '</select><input id="backfillValue" placeholder="稳定值，例如 40 或 true"></div><div class="backfill-grid two"><input id="backfillStart" type="date"><input id="backfillEnd" type="date"></div><div id="backfillResult" class="backfill-result"></div><div class="backfill-actions"><button id="previewBackfill" type="button">查缺口</button><button id="runBackfill" class="primary" type="button">补空白天</button></div></section>'; }
     function fillBackfillControls() { if (!state.backfillOpen) return; var metric = document.getElementById("backfillMetric"); var value = document.getElementById("backfillValue"); var start = document.getElementById("backfillStart"); var end = document.getElementById("backfillEnd"); var result = document.getElementById("backfillResult"); if (!metric) return; if (!state.backfill.metric) state.backfill.metric = findDef("atomoxetine_total_mg") ? "atomoxetine_total_mg" : (state.pinned[0] || ""); if (!state.backfill.end) state.backfill.end = state.date || shanghaiDate(0); if (!state.backfill.start) state.backfill.start = addDays(state.backfill.end, -119); metric.value = state.backfill.metric; value.value = state.backfill.value; start.value = state.backfill.start; end.value = state.backfill.end; result.innerHTML = state.backfillPreview ? backfillPreviewText(state.backfillPreview) : "先选字段并查缺口。我会找最近一次记录，建议从它后一天开始补。"; }
     function renderDenseFilled(defs) { return '<div class="dense-list">' + defs.map(function (def) { var value = valueFor(def); var expanded = !!state.expanded[def.metric_key]; var pinned = state.pinned.indexOf(def.metric_key) !== -1; return '<article class="dense-row ' + (expanded ? 'expanded' : '') + '" data-metric="' + escapeAttr(def.metric_key) + '"><button class="star ' + (pinned ? 'on' : '') + '" type="button" data-pin="' + escapeAttr(def.metric_key) + '">★</button><div><div class="dense-label">' + escapeHtml(cleanLabel(def)) + '</div><div class="dense-sub">' + escapeHtml((CATEGORY_NAMES[def.category] || def.category || '其他') + (def.unit ? ' · ' + def.unit : '')) + '</div></div><div class="dense-value">' + escapeHtml(displayValue(value, def)) + '</div><button class="icon" type="button" data-info="' + escapeAttr(def.metric_key) + '">i</button>' + renderMetricDetail(def) + '</article>'; }).join("") + '</div>'; }
