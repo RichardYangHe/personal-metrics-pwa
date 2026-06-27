@@ -22,6 +22,7 @@
     .datebar { display: grid; grid-template-columns: 42px minmax(0, 1fr) 42px; gap: 6px; min-width: 0; }
     .datebar button { padding: 0; }
     .datebar input { text-align: center; font-weight: 700; }
+    .top-actions { display: grid; grid-template-columns: minmax(0, auto) 42px; gap: 6px; align-items: center; min-width: 0; }
     .status { font-size: 12px; color: var(--muted); text-align: right; white-space: nowrap; }
     .tools { padding: 10px; background: var(--bg); border-bottom: 1px solid var(--line); }
     .today-panel { display: grid; gap: 6px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--panel); }
@@ -66,6 +67,7 @@
     .metric-context .context-text { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .tiny { min-height: 30px; padding: 0 9px; font-size: 12px; border-radius: 999px; }
     .tiny.accent { border-color: #a7d8d0; background: #ecfdf8; color: #0f766e; font-weight: 650; }
+    .tiny.danger, button.danger { border-color: #f2b8b5; background: #fff3f2; color: var(--danger); font-weight: 650; }
     .metric-detail { display: none; border-top: 1px solid var(--line); padding-top: 8px; color: #344054; font-size: 12px; line-height: 1.45; }
     .metric.expanded .metric-detail, .dense-row.expanded .metric-detail { display: block; }
     .detail-grid { display: grid; gap: 5px; }
@@ -153,11 +155,26 @@
     .mindful-active-history { background: rgba(255,255,255,.94); color: var(--ink); max-height: 176px; overflow: auto; }
     .history-list { display: grid; gap: 5px; }
     .history-row { display: grid; grid-template-columns: 82px minmax(0, 1fr) auto; gap: 8px; align-items: center; min-height: 38px; border: 1px solid var(--line); border-radius: 8px; padding: 6px 8px; background: #fff; }
+    .history-row.has-actions { grid-template-columns: 70px minmax(0, 1fr) auto; }
     .history-row .date { color: var(--muted); font-size: 12px; }
     .history-row .value { font-weight: 750; overflow-wrap: anywhere; }
     .history-row .source { color: var(--muted); font-size: 11px; text-align: right; }
+    .history-actions { grid-column: 2 / -1; display: flex; gap: 6px; justify-content: flex-end; flex-wrap: wrap; }
     .bottom { position: fixed; left: 0; right: 0; bottom: 0; z-index: 25; display: grid; grid-template-columns: 1fr auto auto auto; gap: 8px; align-items: center; padding: 10px calc(10px + env(safe-area-inset-right)) calc(10px + env(safe-area-inset-bottom)) calc(10px + env(safe-area-inset-left)); background: rgba(244,246,248,.97); border-top: 1px solid var(--line); backdrop-filter: blur(14px); }
     .pending { color: var(--warn); font-size: 13px; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .sheet { position: fixed; inset: 0; z-index: 40; display: grid; align-items: end; background: rgba(17,24,39,.34); padding: 12px 10px max(12px, env(safe-area-inset-bottom)); }
+    .sheet-card { width: min(640px, 100%); max-height: min(78vh, 720px); overflow: auto; margin: 0 auto; border: 1px solid var(--line); border-radius: 8px; background: var(--panel); box-shadow: 0 24px 70px rgba(15,23,42,.24); }
+    .sheet-head { position: sticky; top: 0; display: grid; grid-template-columns: minmax(0, 1fr) 42px; gap: 8px; align-items: center; padding: 10px; background: rgba(255,255,255,.96); border-bottom: 1px solid var(--line); }
+    .sheet-head h2 { margin: 0; font-size: 18px; }
+    .sheet-head span { color: var(--muted); font-size: 12px; }
+    .sheet-body { display: grid; gap: 10px; padding: 10px; }
+    .sheet-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px; align-items: center; min-height: 38px; border-bottom: 1px solid var(--soft); padding-bottom: 8px; }
+    .sheet-row:last-child { border-bottom: 0; padding-bottom: 0; }
+    .sheet-row b { display: block; font-size: 14px; }
+    .sheet-row span { display: block; color: var(--muted); font-size: 12px; margin-top: 2px; line-height: 1.35; }
+    .sheet-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .sheet-form { display: grid; gap: 8px; }
+    .sheet-form label { display: grid; gap: 4px; color: var(--muted); font-size: 12px; }
     .toast { position: fixed; left: 12px; right: 12px; bottom: calc(76px + env(safe-area-inset-bottom)); padding: 12px; border-radius: 8px; background: #20231f; color: #fff; z-index: 30; text-align: center; opacity: 0; transform: translateY(calc(100% + 90px)); transition: transform .2s ease, opacity .2s ease; pointer-events: none; }
     .toast.show { opacity: 1; transform: translateY(0); }
     @media (min-width: 760px) { .tools, .content { padding-left: 14px; padding-right: 14px; } .today-panel { grid-template-columns: minmax(0, 1fr) 320px; align-items: center; } .quick-actions { grid-template-columns: repeat(3, 1fr); } .metric { grid-template-columns: minmax(0, 1fr) minmax(230px, 300px); align-items: center; } .metric-detail { grid-column: 1 / -1; } .metric-list { grid-template-columns: repeat(2, minmax(0, 1fr)); } .metric-list .metric { grid-template-columns: 1fr; } .backfill-grid { grid-template-columns: 1fr 1fr; } }
