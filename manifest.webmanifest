@@ -25,5 +25,55 @@
       "type": "image/png",
       "purpose": "any maskable"
     }
+  ],
+  "shortcuts": [
+    {
+      "name": "开始正念",
+      "short_name": "开始",
+      "url": "/personal-metrics-pwa/?mode=mindfulness&mindful=start",
+      "icons": [
+        {
+          "src": "/personal-metrics-pwa/icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "拉回 +1",
+      "short_name": "拉回",
+      "url": "/personal-metrics-pwa/?mode=mindfulness&mindful=return",
+      "icons": [
+        {
+          "src": "/personal-metrics-pwa/icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "结束正念",
+      "short_name": "结束",
+      "url": "/personal-metrics-pwa/?mode=mindfulness&mindful=end",
+      "icons": [
+        {
+          "src": "/personal-metrics-pwa/icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "今日数据",
+      "short_name": "今日",
+      "url": "/personal-metrics-pwa/",
+      "icons": [
+        {
+          "src": "/personal-metrics-pwa/icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    }
   ]
 }

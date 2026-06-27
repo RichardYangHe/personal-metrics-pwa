@@ -1,3 +1,1 @@
-# Personal Metrics PWA
-
-Static frontend for the private Supabase-backed personal metrics PWA.
+Static build output for the personal metrics PWA. Edit src/metrics-pwa and run npm run build:metrics-pwa.
