@@ -142,6 +142,7 @@
     .mindful-active-count { width: min(74vw, 260px); aspect-ratio: 1; border-radius: 999px; border: 1px solid rgba(255,255,255,.2); background: rgba(255,255,255,.08); display: grid; place-items: center; align-content: center; gap: 4px; box-shadow: inset 0 0 46px rgba(255,255,255,.06); }
     .mindful-active-count b { font-size: 76px; line-height: 1; }
     .mindful-active-count span { color: #cfe5df; font-size: 15px; }
+    .mindful-sync { color: #f7fffb; background: rgba(255,255,255,.14); border: 1px solid rgba(255,255,255,.16); border-radius: 999px; padding: 3px 8px; font-size: 12px; }
     .mindful-active-grid { width: 100%; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
     .mindful-active-grid div { border: 1px solid rgba(255,255,255,.16); border-radius: 8px; padding: 10px 6px; background: rgba(255,255,255,.07); min-width: 0; }
     .mindful-active-grid b { display: block; font-size: 18px; overflow-wrap: anywhere; }
