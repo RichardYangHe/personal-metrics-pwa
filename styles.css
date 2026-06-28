@@ -67,6 +67,10 @@
     .metric-context { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 8px; min-height: 30px; color: var(--muted); font-size: 13px; }
     .metric-context strong { color: var(--ink); }
     .metric-context .context-text { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .metric-context.pending-sync { color: #915e00; }
+    .metric-context.pending-sync strong { color: #7a4c00; }
+    .metric-context.dirty-sync { color: #0f766e; }
+    .metric-context.dirty-sync strong { color: #0b5d56; }
     .tiny { min-height: 30px; padding: 0 9px; font-size: 12px; border-radius: 999px; }
     .tiny.accent { border-color: #a7d8d0; background: #ecfdf8; color: #0f766e; font-weight: 650; }
     .tiny.danger, button.danger { border-color: #f2b8b5; background: #fff3f2; color: var(--danger); font-weight: 650; }
