@@ -1,6 +1,6 @@
 (function () {
     var BASE = "https://mumcofuervklloaotpih.supabase.co/functions/v1/metrics-pwa";
-    var APP_VERSION = "0.20.3";
+    var APP_VERSION = "0.20.4";
     var APP_RELEASE = "2026-06-28";
     var CATEGORY_NAMES = { body: "身体", health: "健康", mindfulness: "正念", medicine: "药物", supplement: "补剂", food: "食物", learning: "学习", media: "媒体", media_sleep: "媒体睡眠", mood_productivity: "心情效率", productivity: "效率", sleep: "睡眠", habit: "习惯", pet: "宠物", general: "其他" };
     var CATEGORY_ORDER = ["body", "health", "mindfulness", "sleep", "mood_productivity", "productivity", "medicine", "supplement", "food", "learning", "media", "media_sleep", "habit", "pet", "general"];
@@ -63,7 +63,7 @@
     async function syncPendingPreferences() { if (localStorage.getItem("metricsPwaPinnedPending") === "1") await savePreferences(); }
     function showLogin() { el.login.classList.remove("hidden"); el.app.classList.add("hidden"); setTimeout(function () { el.passphrase.focus(); }, 50); }
     function showApp() { el.login.classList.add("hidden"); el.app.classList.remove("hidden"); }
-    async function boot() { registerSW(); saveQueue(); el.dateInput.value = state.date; bindEvents(); if (state.token) { showApp(); hydrateFromCache(); } else { showLogin(); } try { if (state.token) await api("/api/session"); state.authed = true; showApp(); hydrateFromCache(); renderAll(); loadSchema().catch(function (err) { console.error(err); }); loadPreferences().catch(function (err) { console.error(err); }); loadDay().catch(function (err) { console.error(err); }); syncAll().catch(function (err) { console.error(err); }); await handleLaunchIntent(); } catch (err) { console.error("metrics-pwa boot failed", err); if (!state.defs.length) showLogin(); } }
+    async function boot() { registerSW(); saveQueue(); el.dateInput.value = state.date; bindEvents(); if (!state.token) { showLogin(); return; } showApp(); hydrateFromCache(); try { await api("/api/session"); state.authed = true; showApp(); hydrateFromCache(); renderAll(); loadSchema().catch(function (err) { console.error(err); }); loadPreferences().catch(function (err) { console.error(err); }); loadDay().catch(function (err) { console.error(err); }); syncAll().catch(function (err) { console.error(err); }); await handleLaunchIntent(); } catch (err) { console.error("metrics-pwa boot failed", err); if (!state.defs.length) showLogin(); } }
     function registerSW() { if ("serviceWorker" in navigator) { navigator.serviceWorker.addEventListener("controllerchange", function () { if (refreshingForUpdate) return; refreshingForUpdate = true; window.location.reload(); }); navigator.serviceWorker.register("/personal-metrics-pwa/sw.js", { scope: "/personal-metrics-pwa/" }).then(function (registration) { registration.update().catch(function () {}); }).catch(function () {}); } }
     function bindEvents() {
       el.loginForm.addEventListener("submit", async function (event) {
