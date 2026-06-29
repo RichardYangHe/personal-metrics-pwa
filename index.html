@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#f4f6f8">
+  <meta name="theme-color" content="#172033">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="每日数据">
@@ -15,10 +15,17 @@
 </head>
 <body>
   <main id="login" class="login hidden"><h1>每日数据</h1><form id="loginForm"><input id="passphrase" type="password" autocomplete="current-password" placeholder="登录口令"><button class="primary" type="submit">进入</button></form><div id="loginMsg" class="status"></div></main>
-  <main id="app" class="app hidden">
-    <header class="topbar"><button id="todayBtn" class="ghost" type="button">今天</button><div class="datebar"><button id="prevDay" type="button" aria-label="前一天">‹</button><input id="dateInput" type="date"><button id="nextDay" type="button" aria-label="后一天">›</button></div><div class="top-actions"><div id="status" class="status">-</div><button id="settingsBtn" class="icon" type="button" aria-label="设置">⚙</button></div></header>
-    <section class="tools"><div id="todayPanel" class="today-panel"></div><nav id="modeTabs" class="mode-tabs" aria-label="主视图"></nav><div class="quick-actions"><button id="useLatestBtn" class="blue" type="button">沿用常用</button><button id="firstMissingBtn" type="button">下一个</button><button id="backfillToggle" type="button">补录</button></div><details class="advanced-tools"><summary>搜索、分类和字段库</summary><div class="advanced-body"><div class="search-row"><input id="searchInput" type="search" placeholder="搜索字段、别名、说明"><button id="clearSearch" class="icon" type="button" aria-label="清空搜索">×</button></div><nav id="filters" class="filters" aria-label="字段筛选"></nav></div></details><div class="summary"><span id="scopeLabel">-</span><span id="dirtyLabel">-</span></div></section>
-    <section id="content" class="content"></section>
+  <main id="app" class="app app-shell hidden">
+    <aside class="nav-rail" aria-label="应用导航">
+      <div class="brand-block"><div class="brand-mark">D</div><div><b>每日数据</b><span>Personal Metrics</span></div></div>
+      <nav id="modeTabs" class="mode-tabs" aria-label="主视图"></nav>
+      <div class="nav-footer"><div id="status" class="status">-</div><button id="settingsBtn" class="icon" type="button" aria-label="设置">⚙</button></div>
+    </aside>
+    <section class="workbench">
+      <header class="topbar commandbar"><button id="todayBtn" class="ghost" type="button">今天</button><div class="datebar"><button id="prevDay" type="button" aria-label="前一天">‹</button><input id="dateInput" type="date"><button id="nextDay" type="button" aria-label="后一天">›</button></div><div class="top-actions"><div class="summary"><span id="scopeLabel">-</span><span id="dirtyLabel">-</span></div></div></header>
+      <section class="tools"><div id="todayPanel" class="today-panel"></div><div class="quick-actions"><button id="useLatestBtn" class="blue" type="button">沿用常用</button><button id="firstMissingBtn" type="button">下一个</button><button id="backfillToggle" type="button">补录</button></div><details class="advanced-tools"><summary>搜索、分类和字段库</summary><div class="advanced-body"><div class="search-row"><input id="searchInput" type="search" placeholder="搜索字段、别名、说明"><button id="clearSearch" class="icon" type="button" aria-label="清空搜索">×</button></div><nav id="filters" class="filters" aria-label="字段筛选"></nav></div></details></section>
+      <section id="content" class="content"></section>
+    </section>
     <footer class="bottom"><div id="pending" class="pending">无待同步</div><button id="undoBtn" type="button">撤销</button><button id="syncBtn" type="button">同步</button><button id="saveBtn" class="primary" type="button">保存</button></footer>
     <section id="appSheet" class="sheet hidden" role="dialog" aria-modal="true"></section>
     <div id="toast" class="toast"></div>
