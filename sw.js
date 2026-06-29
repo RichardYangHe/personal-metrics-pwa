@@ -1,4 +1,4 @@
-const CACHE = "metrics-pwa-pages-v32";
+const CACHE = "metrics-pwa-pages-v36";
 const BASE = "/personal-metrics-pwa";
 const API_BASE = "https://mumcofuervklloaotpih.supabase.co/functions/v1/metrics-pwa";
 const ASSETS = [BASE + "/", BASE + "/index.html", BASE + "/manifest.webmanifest", BASE + "/icon.svg", BASE + "/apple-touch-icon.png", BASE + "/icon-192.png", BASE + "/icon-512.png", BASE + "/styles.css", BASE + "/app.js"];
