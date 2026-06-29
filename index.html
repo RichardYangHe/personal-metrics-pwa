@@ -14,7 +14,17 @@
   <title>每日数据</title>
 </head>
 <body>
-  <main id="login" class="login hidden"><h1>每日数据</h1><form id="loginForm"><input id="passphrase" type="password" autocomplete="current-password" placeholder="登录口令"><button class="primary" type="submit">进入</button></form><div id="loginMsg" class="status"></div></main>
+  <main id="login" class="login hidden">
+    <section class="login-card">
+      <div class="login-brand"><div class="brand-mark">D</div><div><h1>每日数据</h1><span>Personal Metrics</span></div></div>
+      <form id="loginForm" class="login-form">
+        <label><span>登录口令</span><input id="passphrase" type="password" autocomplete="current-password" placeholder="输入口令"></label>
+        <button class="primary" type="submit">进入</button>
+      </form>
+      <div class="login-meta"><span>本机登录</span><span>Asia/Shanghai</span></div>
+      <div id="loginMsg" class="status"></div>
+    </section>
+  </main>
   <main id="app" class="app app-shell hidden">
     <aside class="nav-rail" aria-label="应用导航">
       <div class="brand-block"><div class="brand-mark">D</div><div><b>每日数据</b><span>Personal Metrics</span></div></div>
@@ -23,7 +33,7 @@
     </aside>
     <section class="workbench">
       <header class="topbar commandbar"><button id="todayBtn" class="ghost" type="button">今天</button><div class="datebar"><button id="prevDay" type="button" aria-label="前一天">‹</button><input id="dateInput" type="date"><button id="nextDay" type="button" aria-label="后一天">›</button></div><div class="top-actions"><div class="summary"><span id="scopeLabel">-</span><span id="dirtyLabel">-</span></div></div></header>
-      <section class="tools"><div id="todayPanel" class="today-panel"></div><div class="quick-actions"><button id="useLatestBtn" class="blue" type="button">沿用常用</button><button id="firstMissingBtn" type="button">下一个</button><button id="backfillToggle" type="button">补录</button></div><details class="advanced-tools"><summary>搜索、分类和字段库</summary><div class="advanced-body"><div class="search-row"><input id="searchInput" type="search" placeholder="搜索字段、别名、说明"><button id="clearSearch" class="icon" type="button" aria-label="清空搜索">×</button></div><nav id="filters" class="filters" aria-label="字段筛选"></nav></div></details></section>
+      <section class="tools"><div id="todayPanel" class="today-panel"></div><div class="quick-actions"><button id="useLatestBtn" class="blue" type="button">沿用常用</button><button id="firstMissingBtn" type="button">下一个</button><button id="backfillToggle" type="button">补录</button></div><details class="advanced-tools" open><summary>搜索、分类和字段库</summary><div class="advanced-body"><div class="search-row"><input id="searchInput" type="search" placeholder="搜索字段、别名、说明"><button id="clearSearch" class="icon" type="button" aria-label="清空搜索">×</button></div><nav id="filters" class="filters" aria-label="字段筛选"></nav></div></details></section>
       <section id="content" class="content"></section>
     </section>
     <footer class="bottom"><div id="pending" class="pending">无待同步</div><button id="undoBtn" type="button">撤销</button><button id="syncBtn" type="button">同步</button><button id="saveBtn" class="primary" type="button">保存</button></footer>
