@@ -8,6 +8,21 @@
     "description": "个人每日指标、正念和趋势记录 PWA",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
+    "shortcuts": [
+        {
+            "name": "记录情绪",
+            "short_name": "情绪",
+            "description": "直接打开情绪找词记录",
+            "url": "./?quick=emotion",
+            "icons": [
+                {
+                    "src": "icons/Icon-192.png",
+                    "sizes": "192x192",
+                    "type": "image/png"
+                }
+            ]
+        }
+    ],
     "icons": [
         {
             "src": "icons/Icon-192.png",
