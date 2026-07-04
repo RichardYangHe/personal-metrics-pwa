@@ -10,9 +10,9 @@
     "prefer_related_applications": false,
     "shortcuts": [
         {
-            "name": "记录情绪",
+            "name": "快速记录情绪",
             "short_name": "情绪",
-            "description": "直接打开情绪找词记录",
+            "description": "直接打开 27 类情绪找词记录",
             "url": "./?quick=emotion",
             "icons": [
                 {
