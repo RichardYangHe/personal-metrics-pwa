@@ -27796,8 +27796,8 @@ _.db=_.cy=_.cx=null
 _.dx=m
 _.fy=_.fx=_.fr=_.dy=!1
 _.k2=_.k1=_.id=_.go=""
-_.k3="V0.24.27"
-_.k4="2026-07-05 20:12"
+_.k3="V0.24.28"
+_.k4="2026-07-05 21:35"
 _.p1=_.ok=null
 _.p3=_.p2=!1
 _.p4=null
@@ -28737,13 +28737,13 @@ this.d=b
 this.a=c},
 WL:function WL(a,b){this.c=a
 this.a=b},
-aWf(a){if(B.c.n(a,"\u5de5\u4f5c")||B.c.n(a,"\u4fe1\u606f\u6d41"))return new A.jg("work",a,"\u5de5\u4f5c / \u4fe1\u606f\u6d41","20:30-22:15\uff1b\u7761\u524d30\u5206",B.OI,B.J_)
-if(B.c.n(a,"\u7761"))return new A.jg("sleep",a,"\u7761\u7720","23:30\u7761\uff0c7:15\u9192",B.r9,B.Iq)
+aWf(a){if(B.c.n(a,"\u5de5\u4f5c")||B.c.n(a,"\u4fe1\u606f\u6d41"))return new A.jg("work",a,"\u5de5\u4f5c / \u4fe1\u606f\u6d41","\u9879\u76ee1\u4e2a\u534a\u5c0f\u65f6\uff1b\u7761\u524d\u534a\u5c0f\u65f6",B.OI,B.J_)
+if(B.c.n(a,"\u7761"))return new A.jg("sleep",a,"\u7761\u7720","9:00\u7761\uff0c16:10\u9192",B.r9,B.Iq)
 if(B.c.n(a,"\u4f53\u91cd"))return new A.jg("weight",a,"\u4f53\u91cd / \u72b6\u6001","154.6\u65a4\uff0c\u7cbe\u795e\u8fd8\u53ef\u4ee5",B.Oo,B.IX)
 if(B.c.n(a,"\u559d\u6c34"))return new A.jg("water",a,"\u559d\u6c34","\u559d\u6c344\u6b21\uff0c\u6709\u70b9\u6e34",B.OG,B.II)
 if(B.c.n(a,"\u7126\u8651")||B.c.n(a,"\u5f3a\u5ea6"))return new A.jg("emotion",a,"\u60c5\u7eea","\u7126\u8651\uff0c\u5f3a\u5ea63\uff0c\u539f\u56e0...",B.rc,B.JH)
-if(B.c.n(a,"\u6563\u6b65")||B.c.n(a,"\u665a\u996d"))return new A.jg("activity",a,"\u6d3b\u52a8 / \u996e\u98df","\u6563\u6b6530\u5206\u949f\uff1b\u665a\u996d...",B.Og,B.Ib)
-if(B.c.n(a,"\u6258\u83ab\u897f\u6c40")||B.c.n(a,"\u8840\u7cd6"))return new A.jg("health",a,"\u5065\u5eb7 / \u8865\u5242","25mg\uff1b\u8840\u7cd65.6",B.On,B.IH)
+if(B.c.n(a,"\u6563\u6b65")||B.c.n(a,"\u665a\u996d"))return new A.jg("activity",a,"\u6d3b\u52a8 / \u996e\u98df","\u6563\u6b651\u4e2a\u534a\u5c0f\u65f6\uff1b\u665a\u996d",B.Og,B.Ib)
+if(B.c.n(a,"\u6258\u83ab\u897f\u6c40")||B.c.n(a,"\u8840\u7cd6"))return new A.jg("health",a,"\u5065\u5eb7 / \u8865\u5242","\u6628\u665a25mg\uff1b\u9910\u540e1.5\u5c0f\u65f6",B.On,B.IH)
 if(B.c.n(a,"\u89c9\u5bdf")||B.c.n(a,"\u547c\u5438"))return new A.jg("mindfulness",a,"\u6b63\u5ff5\u89c9\u5bdf","\u88ab\u60f3\u6cd5\u5e26\u8d70\uff0c\u53c8\u56de\u6765",B.re,B.J0)
 return new A.jg("project",a,"\u9879\u76ee / \u5361\u70b9","\u63a8\u8fdb\u4e86\u4ec0\u4e48\uff0c\u5361\u5728\u54ea",B.OF,B.c3)},
 Oo:function Oo(a,b,c){this.c=a
@@ -93361,7 +93361,7 @@ l=n.e.BK()
 s=7
 return A.C(t.Es.b(l)?l:A.fW(l,t.Ou),$async$Ah)
 case 7:m=b
-if(m==null||m.a==="V0.24.27"){s=1
+if(m==null||m.a==="V0.24.28"){s=1
 break}n.k3=m.a
 l=m.c
 if(l==null)l=m.b
@@ -94625,7 +94625,7 @@ s=A.Z("\u624b\u673a\u4e0a\u7684\u81ea\u7136\u8bed\u8a00\u4e2a\u4eba\u4e8b\u5b9e\
 r=A.aF(999)
 q=A.A(a).ok.at
 p=t.p
-return A.aA(A.b([B.VC,B.CP,A.aD(A.b3(A.b([n,B.jJ,s,B.aR,A.bX(o,A.Z("V0.24.27 \xb7 2026-07-05 20:12",o,1,B.C,o,q==null?o:q.e_(B.j,B.E),o,o,o),B.p,o,new A.b6(B.ej,o,o,r,o,o,B.B),o,o,o,o,B.qe,o,o,o)],p),B.H,o,B.i,B.l,0,B.r),1)],p),B.H,o,B.i,B.l,0,o)}}
+return A.aA(A.b([B.VC,B.CP,A.aD(A.b3(A.b([n,B.jJ,s,B.aR,A.bX(o,A.Z("V0.24.28 \xb7 2026-07-05 21:35",o,1,B.C,o,q==null?o:q.e_(B.j,B.E),o,o,o),B.p,o,new A.b6(B.ej,o,o,r,o,o,B.B),o,o,o,o,B.qe,o,o,o)],p),B.H,o,B.i,B.l,0,B.r),1)],p),B.H,o,B.i,B.l,0,o)}}
 A.W6.prototype={
 A(a){return A.aA(B.SG,B.n,null,B.i,B.l,0,null)}}
 A.xJ.prototype={
@@ -95115,7 +95115,7 @@ A(a){var s,r,q=null,p=A.A(a).ok.w
 p=A.Z("\u4e8b\u5b9e\u6355\u83b7",q,q,q,q,p==null?q:p.At(B.E,1.05),q,q,q)
 s=A.A(a).ok.ax
 r=t.p
-return new A.aH(B.LE,A.aA(A.b([B.VB,B.cQ,A.aD(A.b3(A.b([p,B.dZ,A.Z("V0.24.27 \xb7 2026-07-05 20:12",q,1,B.C,q,s==null?q:s.e_(B.IJ,B.ai),q,q,q)],r),B.H,q,B.i,B.af,0,B.r),1),new A.ZS(this.c,q),B.bs,A.o0(A.Nt(B.OP,new A.adn(this),B.U,q,"\u540e\u53f0\u5237\u65b0"),40)],r),B.n,q,B.i,B.l,0,q),q)}}
+return new A.aH(B.LE,A.aA(A.b([B.VB,B.cQ,A.aD(A.b3(A.b([p,B.dZ,A.Z("V0.24.28 \xb7 2026-07-05 21:35",q,1,B.C,q,s==null?q:s.e_(B.IJ,B.ai),q,q,q)],r),B.H,q,B.i,B.af,0,B.r),1),new A.ZS(this.c,q),B.bs,A.o0(A.Nt(B.OP,new A.adn(this),B.U,q,"\u540e\u53f0\u5237\u65b0"),40)],r),B.n,q,B.i,B.l,0,q),q)}}
 A.adn.prototype={
 $0(){this.a.c.jQ(!0)
 return null},
@@ -96157,13 +96157,13 @@ s=m}else s=h
 q=A.rz(h,B.b9,!1,h,!0,B.J,h,A.yf(),d,h,h,h,h,h,2,A.AY(!0,new A.dx(4,p,new A.am(B.pD,1,B.o,-1)),h,B.Lw,h,h,h,h,!0,new A.dx(4,o,new A.am(B.pD,1,B.o,-1)),h,h,h,h,h,B.kQ,!0,h,h,h,h,new A.dx(4,n,new A.am(B.c3,1.4,B.o,-1)),h,h,h,h,h,h,h,2,h,"\u6628\u665a11\u70b9\u534a\u7761\uff0c\u65e9\u4e0a7\u70b9\u4e00\u523b\u9192\uff1b\u4f53\u91cd154.6\u65a4\uff1b\u5de5\u4f5c2.5\u5c0f\u65f6",h,h,h,h,h,h,h,h,h,!0,!0,!1,h,h,h,h,h,h,h,h,s,h,h,h,h,h),B.ac,!0,h,!0,h,!1,r,B.bY,h,h,h,B.a7M,h,B.jN,h,h,h,6,2,h,!1,"\u2022",h,g,h,new A.auN(i,e),h,!1,h,h,!1,h,!0,h,B.cG,h,h,h,h,h,h,h,h,h,h,h,q,!0,B.aq,h,B.de,h,B.Dh,h,h)
 g=i.a.c
 j=A.b([],t.s)
-if(!g.Q.b.aq("main_sleep_hours"))j.push("\u6628\u665a11\u70b9\u534a\u7761\uff0c\u65e9\u4e0a7\u70b9\u4e00\u523b\u9192\u3002")
+if(!g.Q.b.aq("main_sleep_hours"))j.push("\u6211\u4eca\u5929\u65e9\u4e0a9\u70b9\u7761\u7684\uff0c\u4e0b\u53484\u70b910\u5206\u9192\u3002")
 if(!g.Q.b.aq("body_weight_clothed_jin"))j.push("\u4f53\u91cd154.6\u65a4\uff0c\u4eca\u5929\u7cbe\u795e\u8fd8\u53ef\u4ee5\u3002")
 if(!g.Q.b.aq("water_count"))j.push("\u4eca\u5929\u559d\u6c344\u6b21\uff0c\u4e0b\u5348\u6709\u70b9\u6e34\u3002")
-j.push("\u665a\u4e0a\u516b\u70b9\u534a\u5230\u5341\u70b9\u4e00\u523b\u5de5\u4f5c\uff0c\u7761\u524d\u5237\u77ed\u89c6\u989130\u5206\u949f\u3002")
+j.push("\u4eca\u5929\u9879\u76ee\u5199\u4e86\u4e00\u4e2a\u534a\u5c0f\u65f6\uff0c\u7761\u89c9\u524d\u5237\u77ed\u89c6\u9891\u534a\u5c0f\u65f6\u3002")
 j.push("\u6211\u73b0\u5728\u6709\u70b9\u7126\u8651\uff0c\u5f3a\u5ea63\uff0c\u539f\u56e0\u662f\u65f6\u95f4\u538b\u529b\u3002")
-j.push("\u4e0b\u53486\u70b9\u6563\u6b6530\u5206\u949f\uff0c\u665a\u996d\u5403\u4e86\u725b\u8089\u996d\u3002")
-j.push("\u6258\u83ab\u897f\u6c4025mg\uff0c\u9c7c\u6cb92\u7c92\uff0c\u9e21\u86cb2\u4e2a\uff0c\u8840\u7cd65.6\u9910\u540e2\u5c0f\u65f6\u3002")
+j.push("\u4e0b\u5348\u516d\u70b9\u534a\u6563\u6b65\u4e00\u4e2a\u534a\u5c0f\u65f63\u516c\u91cc\uff0c\u665a\u996d\u5403\u4e86\u725b\u8089\u996d\u3002")
+j.push("\u6628\u665a\u516b\u70b9\u6258\u83ab\u897f\u6c4025mg\uff0c\u9c7c\u6cb92\u7c92\uff0c\u9e21\u86cb2\u4e2a\uff0c\u8840\u7cd65.6\u9910\u540e\u4e00\u4e2a\u534a\u5c0f\u65f6\u3002")
 j.push("\u4eca\u5929\u63a8\u8fdb\u4e86\u6570\u636e\u5e93\u9879\u76ee\uff0c\u5361\u70b9\u662f\u754c\u9762\u8f93\u5165\u592a\u6162\u3002")
 j.push("\u521a\u521a\u89c9\u5bdf\u5230\u81ea\u5df1\u88ab\u60f3\u6cd5\u5e26\u8d70\uff0c\u53c8\u56de\u5230\u547c\u5438\u3002")
 g=t.p
