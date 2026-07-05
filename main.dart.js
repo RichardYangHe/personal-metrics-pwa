@@ -27779,8 +27779,8 @@ _.db=_.cy=_.cx=null
 _.dx=m
 _.fy=_.fx=_.fr=_.dy=!1
 _.id=_.go=""
-_.k1="V0.24.10"
-_.k2="2026-07-05 12:45"
+_.k1="V0.24.11"
+_.k2="2026-07-05 14:05"
 _.k4=_.k3=null
 _.p1=_.ok=!1
 _.p2=null
@@ -93343,7 +93343,7 @@ l=n.e.BK()
 s=7
 return A.C(t.Es.b(l)?l:A.fW(l,t.Ou),$async$Ah)
 case 7:m=b
-if(m==null||m.a==="V0.24.10"){s=1
+if(m==null||m.a==="V0.24.11"){s=1
 break}n.k1=m.a
 l=m.c
 if(l==null)l=m.b
@@ -94605,7 +94605,7 @@ s=A.Z("\u624b\u673a\u4e0a\u7684\u4e2a\u4eba\u6307\u6807\u3001\u6b63\u5ff5\u548c\
 r=A.aF(999)
 q=A.A(a).ok.at
 p=t.p
-return A.aC(A.b([B.Vp,B.CQ,A.aE(A.b5(A.b([n,B.jJ,s,B.aT,A.bW(o,A.Z("V0.24.10 \xb7 2026-07-05 12:45",o,1,B.C,o,q==null?o:q.e_(B.j,B.E),o,o,o),B.p,o,new A.b4(B.ei,o,o,r,o,o,B.B),o,o,o,o,B.qj,o,o,o)],p),B.I,o,B.k,B.l,0,B.r),1)],p),B.I,o,B.k,B.l,0,o)}}
+return A.aC(A.b([B.Vp,B.CQ,A.aE(A.b5(A.b([n,B.jJ,s,B.aT,A.bW(o,A.Z("V0.24.11 \xb7 2026-07-05 14:05",o,1,B.C,o,q==null?o:q.e_(B.j,B.E),o,o,o),B.p,o,new A.b4(B.ei,o,o,r,o,o,B.B),o,o,o,o,B.qj,o,o,o)],p),B.I,o,B.k,B.l,0,B.r),1)],p),B.I,o,B.k,B.l,0,o)}}
 A.W4.prototype={
 A(a){return A.aC(B.Su,B.n,null,B.k,B.l,0,null)}}
 A.xK.prototype={
@@ -95095,7 +95095,7 @@ A(a){var s,r,q=null,p=A.A(a).ok.w
 p=A.Z("\u751f\u6d3b\u9a7e\u9a76\u8231",q,q,q,q,p==null?q:p.At(B.E,1.05),q,q,q)
 s=A.A(a).ok.ax
 r=t.p
-return new A.aL(B.Lu,A.aC(A.b([B.Vo,B.cp,A.aE(A.b5(A.b([p,B.dZ,A.Z("V0.24.10 \xb7 2026-07-05 12:45",q,1,B.C,q,s==null?q:s.e_(B.ID,B.al),q,q,q)],r),B.I,q,B.k,B.ag,0,B.r),1),new A.ZQ(this.c,q),B.bz,A.nZ(A.Nt(B.OD,new A.adl(this),B.V,q,"\u540e\u53f0\u5237\u65b0"),40)],r),B.n,q,B.k,B.l,0,q),q)}}
+return new A.aL(B.Lu,A.aC(A.b([B.Vo,B.cp,A.aE(A.b5(A.b([p,B.dZ,A.Z("V0.24.11 \xb7 2026-07-05 14:05",q,1,B.C,q,s==null?q:s.e_(B.ID,B.al),q,q,q)],r),B.I,q,B.k,B.ag,0,B.r),1),new A.ZQ(this.c,q),B.bz,A.nZ(A.Nt(B.OD,new A.adl(this),B.V,q,"\u540e\u53f0\u5237\u65b0"),40)],r),B.n,q,B.k,B.l,0,q),q)}}
 A.adl.prototype={
 $0(){this.a.c.jQ(!0)
 return null},
@@ -96303,6 +96303,8 @@ aaG(a){var s=a.h(0,"event_type"),r=B.c.dW(A.i(s==null?"":s))
 A:{if(""===r||"natural_language_event"===r){s="\u4e8b\u4ef6"
 break A}if("project_progress"===r){s="\u9879\u76ee\u8fdb\u5c55"
 break A}if("mindfulness_awareness"===r){s="\u6b63\u5ff5\u89c9\u5bdf"
+break A}if("emotion_checkin"===r){s="\u60c5\u7eea\u8bb0\u5f55"
+break A}if("strength_set"===r){s="\u529b\u91cf\u8bad\u7ec3"
 break A}if("life_event"===r){s="\u751f\u6d3b\u4e8b\u4ef6"
 break A}s=A.kZ(r,"_"," ")
 break A}return s},
