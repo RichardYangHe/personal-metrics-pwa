@@ -27736,10 +27736,10 @@ case 6:case 1:return A.M(q,r)
 case 2:return A.L(o.at(-1),r)}})
 return A.N($async$aem,r)},
 C8(a,b){return A.aWC(a,b)},
-aWC(a,b){var s=0,r=A.O(t.H),q,p=2,o=[],n=[],m,l,k,j,i,h
+aWC(a,b){var s=0,r=A.O(t.H),q,p=2,o=[],n=[],m,l,k,j,i,h,g,f,e
 var $async$C8=A.P(function(c,d){if(c===1){o.push(d)
-s=p}for(;;)switch(s){case 0:i=B.c.cS(a.go)
-if(J.cp(i)===0||a.fx){a.id=J.cp(i)===0?"\u5148\u8f93\u5165\u4e00\u6bb5\u8981\u8bb0\u5f55\u7684\u8bdd\u3002":""
+s=p}for(;;)switch(s){case 0:f=B.c.cS(a.go)
+if(J.cp(f)===0||a.fx){a.id=J.cp(f)===0?"\u5148\u8f93\u5165\u4e00\u6bb5\u8981\u8bb0\u5f55\u7684\u8bdd\u3002":""
 a.ag()
 s=1
 break}a.fx=!0
@@ -27748,8 +27748,15 @@ a.w="\u6b63\u5728\u89e3\u6790\u81ea\u7136\u8bed\u8a00"
 a.ag()
 p=4
 k=a.x
+j=A.aWu(a,f)
+i=A.p(t.N,t.z)
+i.m(0,"local_date",a.x)
+h=a.Q.b
+if(h.a!==0)i.m(0,"current_values",h)
+h=a.Q.c
+if(h.a!==0)i.m(0,"latest_values",h)
 s=7
-return A.C(a.a.Cp(A.aWu(a,i),b,k,i),$async$C8)
+return A.C(a.a.Cp(j,i,b,k,f),$async$C8)
 case 7:m=d
 a.cy=m
 a.w=m.x==null?"\u89e3\u6790\u8349\u7a3f\u5df2\u751f\u6210":"\u5df2\u751f\u6210\u4fdd\u5b88\u8349\u7a3f"
@@ -27759,8 +27766,8 @@ a.id=k}n.push(6)
 s=5
 break
 case 4:p=3
-h=o.pop()
-l=A.ao(h)
+e=o.pop()
+l=A.ao(e)
 a.id=A.i(l)
 a.w="\u81ea\u7136\u8bed\u8a00\u89e3\u6790\u5931\u8d25"
 n.push(6)
@@ -27858,8 +27865,8 @@ _.db=_.cy=_.cx=null
 _.dx=m
 _.fy=_.fx=_.fr=_.dy=!1
 _.k2=_.k1=_.id=_.go=""
-_.k3="V0.24.35"
-_.k4="2026-07-06 00:15"
+_.k3="V0.24.36"
+_.k4="2026-07-06 00:41"
 _.p1=_.ok=null
 _.p3=_.p2=!1
 _.p4=null
@@ -93561,7 +93568,7 @@ l=n.e.BN()
 s=7
 return A.C(t.Es.b(l)?l:A.fW(l,t.Ou),$async$Ak)
 case 7:m=b
-if(m==null||m.a==="V0.24.35"){s=1
+if(m==null||m.a==="V0.24.36"){s=1
 break}n.k3=m.a
 l=m.c
 if(l==null)l=m.b
@@ -94440,18 +94447,20 @@ case 1:return A.M(q,r)}})
 return A.N($async$AJ,r)},
 ayR(a,b){return this.hY("/api/metrics",A.as(["local_date",a,"metrics",b],t.N,t.z),"POST").ce(new A.adm(),t.H)},
 ayO(a){return this.hY("/api/event",a,"POST").ce(new A.adl(),t.H)},
-Cp(a,b,c,d){return this.awG(a,b,c,d)},
-awG(a,b,c,d){var s=0,r=A.O(t.Li),q,p=this,o,n
-var $async$Cp=A.P(function(e,f){if(e===1)return A.L(f,r)
-for(;;)switch(s){case 0:o=A.p(t.N,t.z)
-o.m(0,"raw_text",d)
-o.m(0,"local_date",c)
-o.m(0,"client_entry_id",a)
-if(b)o.m(0,"force_reparse",!0)
-n=A
+Cp(a,b,c,d,e){return this.awG(a,b,c,d,e)},
+awG(a,b,c,d,e){var s=0,r=A.O(t.Li),q,p=this,o,n,m
+var $async$Cp=A.P(function(f,g){if(f===1)return A.L(g,r)
+for(;;)switch(s){case 0:n=A.p(t.N,t.z)
+n.m(0,"raw_text",e)
+n.m(0,"local_date",d)
+n.m(0,"client_entry_id",a)
+o=b.a
+if(o!==0)n.m(0,"context",b)
+if(c)n.m(0,"force_reparse",!0)
+m=A
 s=3
-return A.C(p.hY("/api/natural/parse",o,"POST"),$async$Cp)
-case 3:q=n.aKP(f)
+return A.C(p.hY("/api/natural/parse",n,"POST"),$async$Cp)
+case 3:q=m.aKP(g)
 s=1
 break
 case 1:return A.M(q,r)}})
@@ -94849,7 +94858,7 @@ s=A.Y("\u624b\u673a\u4e0a\u7684\u81ea\u7136\u8bed\u8a00\u4e2a\u4eba\u4e8b\u5b9e\
 r=A.aF(999)
 q=A.A(a).ok.at
 p=t.p
-return A.az(A.b([B.VP,B.CS,A.aD(A.b0(A.b([n,B.jK,s,B.aR,A.bT(o,A.Y("V0.24.35 \xb7 2026-07-06 00:15",o,1,B.C,o,q==null?o:q.e_(B.j,B.E),o,o,o),B.p,o,new A.b4(B.ek,o,o,r,o,o,B.B),o,o,o,o,B.qh,o,o,o)],p),B.G,o,B.i,B.l,0,B.r),1)],p),B.G,o,B.i,B.l,0,o)}}
+return A.az(A.b([B.VP,B.CS,A.aD(A.b0(A.b([n,B.jK,s,B.aR,A.bT(o,A.Y("V0.24.36 \xb7 2026-07-06 00:41",o,1,B.C,o,q==null?o:q.e_(B.j,B.E),o,o,o),B.p,o,new A.b4(B.ek,o,o,r,o,o,B.B),o,o,o,o,B.qh,o,o,o)],p),B.G,o,B.i,B.l,0,B.r),1)],p),B.G,o,B.i,B.l,0,o)}}
 A.Wa.prototype={
 A(a){return A.az(B.ST,B.n,null,B.i,B.l,0,null)}}
 A.xN.prototype={
@@ -95339,7 +95348,7 @@ A(a){var s,r,q=null,p=A.A(a).ok.w
 p=A.Y("\u4e8b\u5b9e\u6355\u83b7",q,q,q,q,p==null?q:p.Aw(B.E,1.05),q,q,q)
 s=A.A(a).ok.ax
 r=t.p
-return new A.aE(B.LL,A.az(A.b([B.VO,B.cT,A.aD(A.b0(A.b([p,B.dZ,A.Y("V0.24.35 \xb7 2026-07-06 00:15",q,1,B.C,q,s==null?q:s.e_(B.IO,B.aj),q,q,q)],r),B.G,q,B.i,B.ag,0,B.r),1),new A.ZX(this.c,q),B.bD,A.o1(A.AQ(B.P0,q,new A.adt(this),B.U,q,"\u540e\u53f0\u5237\u65b0"),40)],r),B.n,q,B.i,B.l,0,q),q)}}
+return new A.aE(B.LL,A.az(A.b([B.VO,B.cT,A.aD(A.b0(A.b([p,B.dZ,A.Y("V0.24.36 \xb7 2026-07-06 00:41",q,1,B.C,q,s==null?q:s.e_(B.IO,B.aj),q,q,q)],r),B.G,q,B.i,B.ag,0,B.r),1),new A.ZX(this.c,q),B.bD,A.o1(A.AQ(B.P0,q,new A.adt(this),B.U,q,"\u540e\u53f0\u5237\u65b0"),40)],r),B.n,q,B.i,B.l,0,q),q)}}
 A.adt.prototype={
 $0(){this.a.c.jQ(!0)
 return null},
