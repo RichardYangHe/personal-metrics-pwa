@@ -23,19 +23,6 @@
             ]
         },
         {
-            "name": "快速记录情绪",
-            "short_name": "情绪",
-            "description": "直接打开情绪速记入口",
-            "url": "./?quick=emotion",
-            "icons": [
-                {
-                    "src": "icons/Icon-192.png",
-                    "sizes": "192x192",
-                    "type": "image/png"
-                }
-            ]
-        },
-        {
             "name": "打开正念",
             "short_name": "正念",
             "description": "直接进入正念记录页面",
