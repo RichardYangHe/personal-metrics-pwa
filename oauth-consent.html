@@ -33,7 +33,7 @@
     <p>&#x8FD9;&#x662F;&#x4EC5;&#x4F9B;&#x4F60;&#x4F7F;&#x7528;&#x7684;&#x79C1;&#x6709;&#x8FDE;&#x63A5;&#x3002;&#x6388;&#x6743;&#x540E;&#xFF0C;ChatGPT Work &#x548C; Codex &#x53EF;&#x4EE5;&#x67E5;&#x8BE2;&#x4F60;&#x7684;&#x4E2A;&#x4EBA;&#x8BB0;&#x5F55;&#x4E0E;&#x7ED3;&#x6784;&#x5316;&#x6307;&#x6807;&#x3002;</p>
     <section id="login">
       <label for="email">&#x6388;&#x6743;&#x90AE;&#x7BB1;</label>
-      <input id="email" type="email" autocomplete="email" readonly>
+      <input id="email" type="email" autocomplete="email" inputmode="email" required>
       <button id="send">&#x53D1;&#x9001;&#x767B;&#x5F55;&#x90AE;&#x4EF6;</button>
     </section>
     <section id="approve" hidden>
@@ -51,6 +51,7 @@
     import { createClient } from "https://esm.sh/@supabase/supabase-js@2.110.1";
 
     const CONFIG_URL = "https://mumcofuervklloaotpih.supabase.co/functions/v1/personal-db-mcp/oauth/config";
+    const ACCOUNT_URL = "https://mumcofuervklloaotpih.supabase.co/functions/v1/personal-db-mcp/oauth/account";
     const params = new URLSearchParams(location.search);
     const authId = params.get("authorization_id") || sessionStorage.getItem("mcp_authorization_id");
     const status = document.querySelector("#status");
@@ -78,7 +79,19 @@
         show("\u7f3a\u5c11\u6388\u6743\u8bf7\u6c42\uff0c\u8bf7\u4ece ChatGPT \u91cd\u65b0\u8fde\u63a5\u3002", true);
         return;
       }
-      if (!await session()) return;
+      const currentSession = await session();
+      if (!currentSession) return;
+      const accountResponse = await fetch(ACCOUNT_URL, {
+        cache: "no-store",
+        headers: { authorization: "Bearer " + currentSession.access_token },
+      });
+      if (!accountResponse.ok) {
+        await sb.auth.signOut({ scope: "local" });
+        document.querySelector("#login").hidden = false;
+        document.querySelector("#approve").hidden = true;
+        show("\u6b64\u8d26\u6237\u65e0\u6743\u8bbf\u95ee\u8fd9\u4e2a\u79c1\u6709\u6570\u636e\u5e93\u3002", true);
+        return;
+      }
       const { data, error } = await sb.auth.oauth.getAuthorizationDetails(authId);
       if (error) throw error;
       if (data.redirect_url && !data.authorization_id) {
@@ -96,11 +109,16 @@
     }
 
     document.querySelector("#send").onclick = async () => {
+      const email = document.querySelector("#email").value.trim();
+      if (!email) {
+        show("\u8bf7\u8f93\u5165\u6388\u6743\u90ae\u7bb1\u3002", true);
+        return;
+      }
       const button = document.querySelector("#send");
       button.disabled = true;
       const redirect = location.origin + location.pathname + "?authorization_id=" + encodeURIComponent(authId || "");
       const { error } = await sb.auth.signInWithOtp({
-        email: document.querySelector("#email").value.trim(),
+        email,
         options: { emailRedirectTo: redirect, shouldCreateUser: false },
       });
       button.disabled = false;
@@ -133,7 +151,6 @@
       const response = await fetch(CONFIG_URL, { cache: "no-store" });
       if (!response.ok) throw new Error("OAuth configuration is unavailable.");
       const config = await response.json();
-      document.querySelector("#email").value = config.allowedEmail;
       sb = createClient(config.supabaseUrl, config.publishableKey, {
         auth: { flowType: "pkce", persistSession: true, detectSessionInUrl: false },
       });
