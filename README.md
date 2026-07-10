@@ -1,1 +1,1 @@
-Flutter Web build output for the personal metrics PWA. Edit src/metrics-pwa and run npm run build:metrics-pwa.
+React PWA build output. Edit src/metrics-react-pwa and run npm run build:metrics-pwa.
